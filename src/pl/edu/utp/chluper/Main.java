@@ -58,6 +58,8 @@ public class Main {
 		robot = new Robot("D", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
+                
+                System.out.println("mmm");
 
 		// tworzenie scenariusza i symulacji
 		final Scenario scenario = new FixedRateScenario(5);
