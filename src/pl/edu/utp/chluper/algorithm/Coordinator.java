@@ -19,7 +19,7 @@ public interface Coordinator {
 	 * @param environmentView
 	 */
 	public void coordinate(RobotEnvironmentView environmentView);
-
+        
 	/**
      * Ustawianie logera algorytmowi
      * @param logger

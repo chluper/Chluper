@@ -29,6 +29,7 @@ public class DeliverToDeskAlgorithm extends AbstractAlgorithm {
 
 	public Decision decide(RobotView controlledRobot, RobotEnvironmentView environmentView) {
 		// Wyszukiwanie biurka z zamowieniem.
+
 		if (controlledRobot.getCache().isEmpty()) {
 
 			DeskView deskWithWishes = null;
