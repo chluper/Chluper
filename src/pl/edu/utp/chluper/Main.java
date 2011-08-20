@@ -53,6 +53,12 @@ public class Main {
 		environment.putRobot(robot);
 */
                 Robot robot;
+                robot = new Robot("A", 1);
+		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
+		environment.putRobot(robot);
+		robot = new Robot("B", 1);
+		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
+		environment.putRobot(robot);
 		robot = new Robot("C", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);

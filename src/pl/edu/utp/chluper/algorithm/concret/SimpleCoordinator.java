@@ -84,6 +84,7 @@ public class SimpleCoordinator extends AbstractCoordinator {
                         break;
                     } else{
                         logger.level2("ten robot pracuje!");
+                        logger.level2(robot.getName());
                         SimpleCoordinatorDecision decision= zadania.get(robot.getName());
                         if(decision.getDecisionType()==SimpleCoordinatorDecisionType.TAKE_FROM_DESK && robot.getCache().isEmpty()){
                             logger.level2("ROBOT SKONCZYL PRACE!");
