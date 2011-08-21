@@ -38,8 +38,12 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                     if(controlledRobot.getCache().isEmpty() && environmentView.getDeskViewByNumber((Integer)decyzja.getArg0()).getWishList().isEmpty())
                         return new Decision(DecisionType.WAIT);
                         if(controlledRobot.getCache().isEmpty()){
-                       
+                       //tutaj tez, jezeli wishList jest puste, to robot skonczyl prace
+                            
                         DeskView biurko = environmentView.getDeskViewByNumber((Integer)decyzja.getArg0());
+                        if(biurko.getWishList().isEmpty())
+                            coordinator.isFree(controlledRobot.getName());
+                        else
                         return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, biurko.getWishList().get(0));
                     }else{
                         DeskView biurko = environmentView.getDeskViewByNumber((Integer)decyzja.getArg0());
@@ -59,9 +63,13 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                     logger.level2("koordynator: wez z biruka");
                     if(controlledRobot.getCache().isEmpty()){
                         DeskView biurko = environmentView.getDeskViewByNumber((Integer)decyzja.getArg0());
+                        if(biurko.getBooksToReturn().isEmpty())
+                            coordinator.isFree(controlledRobot.getName());
+                        else{
                        logger.level2("Pobieranie ksiazki " + biurko.getBooksToReturn().get(0) + " z biurka:" + biurko ); 
                        //jezeli nie ma ksiazki do zwrocenia - robot konczy prace co nie?
 				return new Decision(DecisionType.TAKE_FROM_DESK, biurko.getNumber(), biurko.getBooksToReturn().get(0).getIsbn());
+                        }
                     } 
                     else{
                         logger.level2("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
