@@ -81,8 +81,7 @@ public class SimpleCoordinator extends AbstractCoordinator {
                         if (robotsState.get(waitingRobot).equals(RobotState.WAITING)) {
                             logger.level2("Książką numer: " + deskWithWishes.getBooksToReturn().get(i).getIsbn() + " zajmie się robot: " + waitingRobot.getName());
                             robotsState.remove(waitingRobot);
-                            robotsState.put(waitingRobot, RobotState.BUSY);                            
-                            System.out.println("test");
+                            robotsState.put(waitingRobot, RobotState.BUSY);
                             break;
                         }
                     }
