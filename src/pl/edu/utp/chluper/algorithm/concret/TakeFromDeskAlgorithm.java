@@ -35,6 +35,7 @@ public class TakeFromDeskAlgorithm extends AbstractAlgorithm {
 				int number = nextDeskNumber();
 				if (!environmentView.getDeskViewByNumber(number).getBooksToReturn().isEmpty()) {
 					deskWithBooks = environmentView.getDeskViewByNumber(number);
+                                        System.out.println(deskWithBooks.getNumber()+": "+deskWithBooks.getBooksToReturn().size());
 					break;
 				}
 			}
