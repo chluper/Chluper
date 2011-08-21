@@ -151,7 +151,7 @@ public class SimpleCoordinator extends AbstractCoordinator {
                         for (Decision decyzje : zadania.values()) {
                             
                                 if(decyzje.getDecisionType()!=DecisionType.TAKE_FROM_DESK && (Integer)decyzje.getArg0()!=deskWithBooks.getNumber())    
-                                {  logger.level2("juz ktos to nakurwia to: "+decyzje.getDecisionType());
+                                {  logger.level2("juz ktos to wykonuje to: "+decyzje.getDecisionType());
                                 logger.level2("i to: "+decyzje.getArg0());
                                 robotsOnDuty.add(robot.getName());
                             

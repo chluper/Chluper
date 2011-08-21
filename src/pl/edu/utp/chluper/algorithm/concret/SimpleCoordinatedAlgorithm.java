@@ -59,7 +59,8 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                     logger.level2("koordynator: wez z biruka");
                     if(controlledRobot.getCache().isEmpty()){
                         DeskView biurko = environmentView.getDeskViewByNumber((Integer)decyzja.getArg0());
-                       logger.level2("Pobieranie ksiazki " + biurko.getBooksToReturn().get(0) + " z biurka:" + biurko );
+                       logger.level2("Pobieranie ksiazki " + biurko.getBooksToReturn().get(0) + " z biurka:" + biurko ); 
+                       //jezeli nie ma ksiazki do zwrocenia - robot konczy prace co nie?
 				return new Decision(DecisionType.TAKE_FROM_DESK, biurko.getNumber(), biurko.getBooksToReturn().get(0).getIsbn());
                     } 
                     else{
@@ -70,7 +71,7 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
                 }
                 default : {
-                    logger.level2("chuj wie...");
+                    logger.level2("chyba to nie powinno wystapic");
                     break;
                 }
                     
