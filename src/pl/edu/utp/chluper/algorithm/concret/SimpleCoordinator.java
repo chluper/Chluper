@@ -159,7 +159,10 @@ public class SimpleCoordinator extends AbstractCoordinator {
                         }
 
                         }
-
+//komentarz na probe
+         // ale wiecie 
+         // cocooooo
+          
 
                     }
                 }
