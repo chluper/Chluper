@@ -13,7 +13,7 @@ import pl.edu.utp.chluper.environment.view.RobotView;
 
 /**
  *
- * @author damian
+ * @author damian & kinga
  */
 public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
@@ -30,15 +30,27 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
     public Decision decide(RobotView controlledRobot, RobotEnvironmentView environmentView) {
         //simpleCoordinator.coordinate(environmentView);
-        DeskView deskToDo = simpleCoordinator.getDesksToDo(controlledRobot.getName());
-        if (deskToDo != null) {
+        int deskToDoNumber = simpleCoordinator.getDesksToDo(controlledRobot.getName());
+        if (deskToDoNumber != -1) {
+            DeskView deskToDo = environmentView.getDeskViewByNumber(deskToDoNumber);
             if (controlledRobot.getCache().isEmpty()) {
-                if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getBooksToReturn().isEmpty()) {
-                    logger.level2("Pobieranie ksiazki " + deskToDo.getBooksToReturn().get(0) + " z biurka:" + deskToDo);
-                    return new Decision(DecisionType.TAKE_FROM_DESK, deskToDo.getNumber(), deskToDo.getBooksToReturn().get(0).getIsbn());
+                if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getBooksToReturn().isEmpty() || !environmentView.getDeskViewByNumber(deskToDo.getNumber()).getWishList().isEmpty()) {
+                    if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getBooksToReturn().isEmpty()) {
+                        logger.level2("Pobieranie ksiazki " + deskToDo.getBooksToReturn().get(0) + " z biurka:" + deskToDo);
+                        return new Decision(DecisionType.TAKE_FROM_DESK, deskToDo.getNumber(), deskToDo.getBooksToReturn().get(0).getIsbn());
 
-                }
-                else{
+                    }
+                    else{
+                        return new Decision(DecisionType.WAIT);
+                    }
+//                    if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getWishList().isEmpty()) {
+//                        
+//                        return new Decision(DecisionType.WAIT);
+//                    }
+//                    else{
+//                        return new Decision(DecisionType.WAIT);
+//                    }
+                } else {
                     return new Decision(DecisionType.WAIT);
                 }
             } else {
@@ -47,6 +59,7 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
             }
 
         } else {
+            simpleCoordinator.removeTaskFromDeskToDo(controlledRobot.getName(), deskToDoNumber);
             return new Decision(DecisionType.WAIT);
         }
 
