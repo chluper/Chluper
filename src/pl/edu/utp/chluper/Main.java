@@ -39,19 +39,19 @@ public class Main {
 
 		// tworzenie srodowiska
         final EnvironmantCreator creator = new EnvironmantCreator();
-        final Environment environment = creator.createEnviroment(8, 5, 2, 1, 5);
+        final Environment environment = creator.createEnviroment(8, 5, 2, 5, 5);
 
 		// koordynator
-		final Coordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
-
+		//final Coordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
+                final SimpleCoordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
 		// dodawanie robotow
-//		Robot robot = new Robot("A", 1);
-//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new DeliverToDeskAlgorithm(environment.getRobotEnvironmentView()))));
-//		environment.putRobot(robot);
+		//Robot robot = new Robot("A", 1);
+		//robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new DeliverToDeskAlgorithm(environment.getRobotEnvironmentView()))));
+		//environment.putRobot(robot);
 //		robot = new Robot("B", 1);
 //		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new TakeFromDeskAlgorithm(environment.getRobotEnvironmentView()))));
 //		environment.putRobot(robot);
-
+                
 		Robot robot = new Robot("C", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
@@ -71,9 +71,9 @@ public class Main {
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.STUDENT_MANAGER);
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.EXECUTOR);
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-A");
-		//simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-C");
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.COORDINATOR);
-		//simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.DESK);
+		//simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, "Algorithm-C");
+		//simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.COORDINATOR);
+		//simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.ROBOT);
 
 		// tworzenie gui
         final JFrame frame = new JFrame("Simulator");

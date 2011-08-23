@@ -21,7 +21,9 @@ import pl.edu.utp.chluper.environment.view.RobotView;
 public class SimpleCoordinator extends AbstractCoordinator {
 
     private LinkedList<Integer> desks = new LinkedList<Integer>();
-    private HashMap<RobotView, Enum> robotsState = new HashMap<RobotView, Enum>();
+    private HashMap<String, Enum> robotsState = new HashMap<String, Enum>();
+    private HashMap<String, DeskView> deskToDo = new HashMap<String, DeskView>();
+    //private LinkedList<Integer, Integer> currentTaskBooksToReturn = new HashMap<Integer, Integer>();
     //private HashMap<Integer, Integer> currentTaskBooksToReturn = new HashMap<Integer, Integer>();
     //private HashMap<Integer, DeskView> currentTaskWishList = new HashMap<Integer, DeskView>();
     private DeskView deskWithWishes;
@@ -34,13 +36,12 @@ public class SimpleCoordinator extends AbstractCoordinator {
     }
 
     //Decyzja
-    public enum RobotDecisionType {
-
-        WAIT,
-        DELIVER_TO_DESK,
-        DELIVER_TO_BOOKSHELF;
-    }
-
+//    public enum RobotDecisionType {
+//
+//        WAIT,
+//        DELIVER_TO_DESK,
+//        DELIVER_TO_BOOKSHELF;
+//    }
     public SimpleCoordinator(RobotEnvironmentView environmentView) {
         DeskView deskWithWishes = null;
         for (DeskView desk : environmentView.getDeskViews()) {
@@ -52,7 +53,7 @@ public class SimpleCoordinator extends AbstractCoordinator {
         //Tworzenie listy robotów obsługujących bibliotekę
         if (robotsState.isEmpty()) {
             for (RobotView robot : environmentView.getRobotViews()) {
-                robotsState.put(robot, RobotState.WAITING);
+                robotsState.put(robot.getName(), RobotState.WAITING);
             }
             logger.level2("Koordynator zczytał listę dostępnych robotów. Robotów czekających na zadanie: " + robotsState.size());
         }
@@ -68,28 +69,51 @@ public class SimpleCoordinator extends AbstractCoordinator {
                 }
             }
         } else {
-            if (!deskWithWishes.getWishList().isEmpty()) {
-                logger.level2("Obsługiwanie listy życzeń z biurka numer: " + deskWithWishes.getNumber());
-                for (int i = 0; i < deskWithWishes.getWishList().size(); i++) {
-                    deskWithWishes.getWishList().get(i);
-                }
-            }
-            if (!deskWithWishes.getBooksToReturn().isEmpty()) {
-                logger.level2("Obsługiwanie oddanych książek (sztuk: " + deskWithWishes.getBooksToReturn().size() + ") z biurka numer: " + deskWithWishes.getNumber());
-                for (int i = 0; i < deskWithWishes.getBooksToReturn().size(); i++) {
-                    for (RobotView waitingRobot : robotsState.keySet()) {
+//            if (!deskWithWishes.getWishList().isEmpty()) {
+//                logger.level2("Obsługiwanie listy życzeń z biurka numer: " + deskWithWishes.getNumber());
+//                for (int i = 0; i < deskWithWishes.getWishList().size(); i++) {
+//                    deskWithWishes.getWishList().get(i);
+//                }
+//            }
+            if (!deskWithWishes.getBooksToReturn().isEmpty() || !deskWithWishes.getWishList().isEmpty()) {
+                //logger.level2("Obsługiwanie oddanych książek (sztuk: " + deskWithWishes.getBooksToReturn().size() + ") z biurka numer: " + deskWithWishes.getNumber());
+                //for (int i = 0; i < deskWithWishes.getBooksToReturn().size(); i++) {
+
+                for (String waitingRobot : robotsState.keySet()) {
+                    System.out.println(deskToDo);
+                    if (!deskToDo.containsValue(deskWithWishes)) {
                         if (robotsState.get(waitingRobot).equals(RobotState.WAITING)) {
-                            logger.level2("Książką numer: " + deskWithWishes.getBooksToReturn().get(i).getIsbn() + " zajmie się robot: " + waitingRobot.getName());
+                            
+                            //logger.level2("Książką numer: " + deskWithWishes.getBooksToReturn().get(i).getIsbn() + " zajmie się robot: " + waitingRobot.getName());
+                            logger.level2("Biurkiem numer: " + deskWithWishes.getNumber() + " zajmie się robot: " + waitingRobot);
                             robotsState.remove(waitingRobot);
                             robotsState.put(waitingRobot, RobotState.BUSY);
+                            deskToDo.put(waitingRobot, deskWithWishes);
                             break;
                         }
+                    } else {
+                        logger.level2("To biurko jest już obsługiwane!");
                     }
                 }
+
+//}
+                deskWithWishes = null;
             }
         }
     }
 
+    public DeskView getDesksToDo(String robotName) {
+        if (deskToDo.get(robotName) != null) {
+            DeskView deksToDoNumber = deskToDo.get(robotName);
+            return deksToDoNumber;
+        } else {
+            return null;
+        }
+    }
+
+//    public HashMap<String, Integer> getDeskToDo() {
+//        return deskToDo;
+//    }
     private int nextDeskNumber() {
         int number = desks.removeLast();
         desks.addFirst(number);
