@@ -47,8 +47,8 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                         logger.level3("Pobieranie ksiazki:" + deskToDo.getWishList().get(0) + " dla biurka: " + deskToDo.getNumber());
                         return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, deskToDo.getWishList().get(0));
                     } else {
-                        logger.level3("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
-                        return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, controlledRobot.getCache().get(0).getIsbn());                   
+                        logger.level2("Dostarczani ksiazki:" + controlledRobot.getCache().get(0) + " do biurka: " + deskToDo.getNumber());
+			return new Decision(DecisionType.DELIVER_TO_DESK, deskToDo.getNumber(), controlledRobot.getCache().get(0).getIsbn());
                     }
                 }
             } else {
