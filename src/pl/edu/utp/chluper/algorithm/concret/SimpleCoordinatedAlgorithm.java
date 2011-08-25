@@ -31,22 +31,22 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
             if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getBooksToReturn().isEmpty() || !environmentView.getDeskViewByNumber(deskToDo.getNumber()).getWishList().isEmpty()) {
                 if (!environmentView.getDeskViewByNumber(deskToDo.getNumber()).getBooksToReturn().isEmpty()) {
                     if (controlledRobot.getCache().isEmpty()) {
-                        logger.level1("Pobieranie ksiazki " + deskToDo.getBooksToReturn().get(0) + " z biurka:" + deskToDo);
+                        logger.level2("Pobieranie ksiazki " + deskToDo.getBooksToReturn().get(0) + " z biurka:" + deskToDo);
                         return new Decision(DecisionType.TAKE_FROM_DESK, deskToDo.getNumber(), deskToDo.getBooksToReturn().get(0).getIsbn());
                     } else {
-                        logger.level1("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
+                        logger.level2("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
                         return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, controlledRobot.getCache().get(0).getIsbn());
                     }
                 } else {
                     if (controlledRobot.getCache().isEmpty()) {
-                        logger.level1("Pobieranie ksiazki:" + deskToDo.getWishList().get(0) + " dla biurka: " + deskToDo.getNumber());
+                        logger.level2("Pobieranie ksiazki:" + deskToDo.getWishList().get(0) + " dla biurka: " + deskToDo.getNumber());
                         return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, deskToDo.getWishList().get(0));
                     } else {
                         if (controlledRobot.getCache().get(0).getIsbn() == deskToDo.getWishList().get(0)) {
-                            logger.level1("Dostarczani ksiazki:" + controlledRobot.getCache().get(0) + " do biurka: " + deskToDo.getNumber());
+                            logger.level2("Dostarczani ksiazki:" + controlledRobot.getCache().get(0) + " do biurka: " + deskToDo.getNumber());
                             return new Decision(DecisionType.DELIVER_TO_DESK, deskToDo.getNumber(), controlledRobot.getCache().get(0).getIsbn());
                         } else {
-                            logger.level1("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
+                            logger.level2("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
                             return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, controlledRobot.getCache().get(0).getIsbn());
                         }
                     }
