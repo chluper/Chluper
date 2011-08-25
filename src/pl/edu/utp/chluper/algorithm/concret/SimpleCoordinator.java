@@ -72,7 +72,7 @@ public class SimpleCoordinator extends AbstractCoordinator {
             if (!environmentView.getDeskViewByNumber(number).getBooksToReturn().isEmpty()) {//!environmentView.getDeskViewByNumber(number).getWishList().isEmpty() || 
                 if (!deskToDo.containsValue(number)) {
                     deskWithWishes = environmentView.getDeskViewByNumber(number);
-                    logger.level2("Koordynator wybrał biurko, które będzie obsługiwane. Numer biurka: " + deskWithWishes.getNumber());
+                    //logger.level2("Koordynator wybrał biurko, które będzie obsługiwane. Numer biurka: " + deskWithWishes.getNumber());
 
                     break;
                 }
