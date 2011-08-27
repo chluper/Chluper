@@ -50,26 +50,69 @@ public class SimpleCoordinator extends AbstractCoordinator {
             int numberOfDesk = nextDeskNumber();
             DeskView desk = environmentView.getDeskViewByNumber(numberOfDesk);
            // logger.level2("LICZBA KSIAZEK: " + desk.getBooksToReturn().size() + " NA BIORKU: "+numberOfDesk);
+            
+            //tutaj nie do konca tak ma byc. jezeli pierwsza decyzja bedzie juz obslugiwana przez robota
+            //to dopiero bedzie pozniej sprawdzone i koordynator nie przydzieli zadania (bo zrobi break'a). 
+            //powinno byc tak, ze wraz z sprawdzeniem, jakie zadanie ma byc wykonywane, trzeba sprawdzic czy 
+            //robot juz to wykonuje... 
+             if (!desk.getWishList().isEmpty()) {
+                //teraz, trzeba sprawdzic czy to zadanie nie jest przydzielone komus, jezeli tak to pozniej nie zostanie przydzielony
+                 //zaden robor do innego zadania (chociaz beda)
+                decyzja = new SimpleCoordinatorDecision(SimpleCoordinatorDecisionType.DELIVER_TO_DESK, numberOfDesk);
+                
+                for (String doingRobot : zadania.keySet()) {
+                    SimpleCoordinatorDecision zadanieRobota = zadania.get(doingRobot);
+                
+                    if (zadanieRobota.getDecisionType() == decyzja.getDecisionType() && zadanieRobota.getArg0() == decyzja.getArg0()) {
+                        logger.level2("TO ZADANIE JEST JUZ WYKONYWANE!");
+                    
+                        decyzja = null;
+                        break;
+                    }
+                }
+                
+                if(decyzja!=null)
+                break;
+            }
             if (!desk.getBooksToReturn().isEmpty()) {
                 decyzja = new SimpleCoordinatorDecision(SimpleCoordinatorDecisionType.TAKE_FROM_DESK, numberOfDesk);
-                break;
-            }
-            if (!desk.getWishList().isEmpty()) {
-                decyzja = new SimpleCoordinatorDecision(SimpleCoordinatorDecisionType.DELIVER_TO_DESK, numberOfDesk);
-                break;
-            }
-        }
-        //trzeba sprawdzic czy dane zadanie nie jest juz przez jakiegos robota wykonywane
-        if (decyzja != null) {
-            for (String doingRobot : zadania.keySet()) {
+                
+                for (String doingRobot : zadania.keySet()) {
                 SimpleCoordinatorDecision zadanieRobota = zadania.get(doingRobot);
+                
                 if (zadanieRobota.getDecisionType() == decyzja.getDecisionType() && zadanieRobota.getArg0() == decyzja.getArg0()) {
                     logger.level2("TO ZADANIE JEST JUZ WYKONYWANE!");
+                    
                     decyzja = null;
                     break;
                 }
             }
+                
+                
+                
+                
+                
+                if(decyzja!=null)
+                break;
+            }
+           
         }
+        //trzeba sprawdzic czy dane zadanie nie jest juz przez jakiegos robota wykonywane
+        
+        //moze trzeba sprawdzac ile robotow robi dane zadanie, i ile jest ksiazek?
+        //1 - czyli to
+       /* if (decyzja != null) {
+            for (String doingRobot : zadania.keySet()) {
+                SimpleCoordinatorDecision zadanieRobota = zadania.get(doingRobot);
+                
+                if (zadanieRobota.getDecisionType() == decyzja.getDecisionType() && zadanieRobota.getArg0() == decyzja.getArg0()) {
+                    logger.level2("TO ZADANIE JEST JUZ WYKONYWANE!");
+                    
+                    decyzja = null;
+                    break;
+                }
+            }
+        }*/
 
 
         RobotView freeRobot = null;
