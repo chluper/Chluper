@@ -39,7 +39,7 @@ public class Main {
 
 		// tworzenie srodowiska
         final EnvironmantCreator creator = new EnvironmantCreator();
-        final Environment environment = creator.createEnviroment(8, 5, 2, 3, 5);
+        final Environment environment = creator.createEnviroment(8, 5, 2, 1, 5);
 
 		// koordynator
 		final SimpleCoordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
