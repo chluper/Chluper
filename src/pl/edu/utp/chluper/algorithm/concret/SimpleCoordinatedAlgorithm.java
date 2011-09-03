@@ -33,20 +33,20 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
         switch (decyzja.getDecisionType()) {
             case DELIVER_TO_DESK: {
-                if (controlledRobot.getCache().isEmpty() && environmentView.getDeskViewByNumber((Integer) decyzja.getArg0()).getWishList().isEmpty()) {
-                    return new Decision(DecisionType.WAIT);
-                }
+             //   if (controlledRobot.getCache().isEmpty() && environmentView.getDeskViewByNumber(decyzja.getArg0()).getWishList().isEmpty()) {
+              //      return new Decision(DecisionType.WAIT);
+               // }
                 if (controlledRobot.getCache().isEmpty()) {
                     //tutaj tez, jezeli wishList jest puste, to robot skonczyl prace
 
-                    DeskView biurko = environmentView.getDeskViewByNumber((Integer) decyzja.getArg0());
+                    DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
                     if (biurko.getWishList().isEmpty()) {
                         coordinator.isFree(controlledRobot.getName());
                     } else {
                         return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, biurko.getWishList().get(0));
                     }
                 } else {
-                    DeskView biurko = environmentView.getDeskViewByNumber((Integer) decyzja.getArg0());
+                    DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
                     return new Decision(DecisionType.DELIVER_TO_DESK, biurko.getNumber(), controlledRobot.getCache().get(0).getIsbn());
                 }
 

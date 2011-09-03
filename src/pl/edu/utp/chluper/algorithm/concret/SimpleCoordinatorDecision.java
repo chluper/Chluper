@@ -4,6 +4,7 @@
  */
 package pl.edu.utp.chluper.algorithm.concret;
 
+import java.util.LinkedList;
 import pl.edu.utp.chluper.algorithm.Decision;
 import pl.edu.utp.chluper.algorithm.concret.SimpleCoordinatorDecisionType;
 
@@ -16,17 +17,17 @@ import pl.edu.utp.chluper.algorithm.concret.SimpleCoordinatorDecisionType;
 public class SimpleCoordinatorDecision{
 
     private final SimpleCoordinatorDecisionType decisionType;
-    private final Object arg0;
-    private final Object arg1;
+    private final Integer arg0;
+    private final LinkedList arg1;
     
     
- /*   public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Object arg0, Object arg1) {
+    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0, LinkedList arg1) {
         this.decisionType = decisionType;
         this.arg0 = arg0;
         this.arg1 = arg1;
     }
-   */ 
-    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Object arg0) {
+  
+    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0) {
         this.decisionType = decisionType;
         this.arg0 = arg0;
         this.arg1 = null;
@@ -41,11 +42,11 @@ public class SimpleCoordinatorDecision{
         return decisionType;
     }
 
-    public Object getArg0() {
+    public Integer getArg0() {
         return arg0;
     }
 
-    public Object getArg1() {
+    public LinkedList getArg1() {
         return arg1;
     }
      
