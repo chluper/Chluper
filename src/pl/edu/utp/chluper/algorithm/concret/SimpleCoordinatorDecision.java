@@ -7,6 +7,7 @@ package pl.edu.utp.chluper.algorithm.concret;
 import java.util.LinkedList;
 import pl.edu.utp.chluper.algorithm.Decision;
 import pl.edu.utp.chluper.algorithm.concret.SimpleCoordinatorDecisionType;
+import pl.edu.utp.chluper.environment.element.Book;
 
 
 /**
@@ -18,10 +19,10 @@ public class SimpleCoordinatorDecision{
 
     private final SimpleCoordinatorDecisionType decisionType;
     private final Integer arg0;
-    private final LinkedList arg1;
+    private final Book arg1;
     
     
-    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0, LinkedList arg1) {
+    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0, Book arg1) {
         this.decisionType = decisionType;
         this.arg0 = arg0;
         this.arg1 = arg1;
@@ -46,7 +47,7 @@ public class SimpleCoordinatorDecision{
         return arg0;
     }
 
-    public LinkedList getArg1() {
+    public Book getArg1() {
         return arg1;
     }
      

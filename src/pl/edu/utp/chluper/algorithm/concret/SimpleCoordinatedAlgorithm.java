@@ -21,6 +21,7 @@ import pl.edu.utp.chluper.environment.view.DeskView;
 public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
     private final SimpleCoordinator coordinator;
+    private DecisionType doing = DecisionType.WAIT;
 
     public SimpleCoordinatedAlgorithm(SimpleCoordinator coordinator) {
         this.coordinator = coordinator;
@@ -33,57 +34,66 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
 
         switch (decyzja.getDecisionType()) {
             case DELIVER_TO_DESK: {
-             //   if (controlledRobot.getCache().isEmpty() && environmentView.getDeskViewByNumber(decyzja.getArg0()).getWishList().isEmpty()) {
-              //      return new Decision(DecisionType.WAIT);
-               // }
-                if (controlledRobot.getCache().isEmpty()) {
-                    //tutaj tez, jezeli wishList jest puste, to robot skonczyl prace
+
+
+                if (doing == DecisionType.WAIT) {
+                    doing = DecisionType.TAKE_FROM_BOOKSHELF;
 
                     DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
-                    if (biurko.getWishList().isEmpty()) {
-                        coordinator.isFree(controlledRobot.getName());
-                    } else {
-                        return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, biurko.getWishList().get(0));
-                    }
-                } else {
+                    return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, decyzja.getArg1().getIsbn());
+                }
+                if (doing == DecisionType.TAKE_FROM_BOOKSHELF) {
+                    doing = DecisionType.DELIVER_TO_DESK;
                     DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
-                    return new Decision(DecisionType.DELIVER_TO_DESK, biurko.getNumber(), controlledRobot.getCache().get(0).getIsbn());
+                    return new Decision(DecisionType.DELIVER_TO_DESK, biurko.getNumber(), decyzja.getArg1().getIsbn());
+                }
+                if (doing == DecisionType.DELIVER_TO_DESK) {
+                    coordinator.isFree(controlledRobot.getName());
+
+                    doing = DecisionType.WAIT;
+                    return new Decision(DecisionType.WAIT);
                 }
 
-                //  logger.level2("koordynator: dostarczyc ksiazke do biurka");
-                //  return new Decision(DecisionType.WAIT);
+                break;
             }
 
             case WAIT: {
                 logger.level2("koordynator: czekaj");
+                doing = DecisionType.WAIT;
                 return new Decision(DecisionType.WAIT);
 
             }
             case TAKE_FROM_DESK: {
-                logger.level2("koordynator: wez z biruka");
-                if (controlledRobot.getCache().isEmpty()) {
-                    DeskView biurko = environmentView.getDeskViewByNumber((Integer) decyzja.getArg0());
-                    if (biurko.getBooksToReturn().isEmpty()) {
-                        coordinator.isFree(controlledRobot.getName());
-                    } else {
-                        logger.level2("Pobieranie ksiazki " + biurko.getBooksToReturn().get(0) + " z biurka:" + biurko);
-                        //jezeli nie ma ksiazki do zwrocenia - robot konczy prace co nie?
-                        return new Decision(DecisionType.TAKE_FROM_DESK, biurko.getNumber(), biurko.getBooksToReturn().get(0).getIsbn());
-                    }
-                } else {
-                    logger.level2("Dostarczanie ksiazki na pulke:" + controlledRobot.getCache().get(0));
 
-                    return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, controlledRobot.getCache().get(0).getIsbn());
+                if (doing == DecisionType.WAIT) {
+                    DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
+                    doing = DecisionType.TAKE_FROM_DESK;                                  //biurko.getBooksToReturn().get(0).getIsbn()
+                    return new Decision(DecisionType.TAKE_FROM_DESK, biurko.getNumber(), decyzja.getArg1().getIsbn());
+                    //tutaj bedzie pobierany w drugim argumencie (1) numer isbn ksiazki badz lista
                 }
 
+
+                if (doing == DecisionType.TAKE_FROM_DESK) {
+                    doing = DecisionType.DELIVER_TO_BOOKSHELF;                //controlledRobot.getCache().get(0).getIsbn()
+                    return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, decyzja.getArg1().getIsbn());
+                }
+
+                if (doing == DecisionType.DELIVER_TO_BOOKSHELF) {
+                    doing = DecisionType.WAIT;
+                    coordinator.isFree(controlledRobot.getName());
+                    return new Decision(DecisionType.WAIT);
+
+                }
+
+                break;
             }
             default: {
                 logger.level2("chyba to nie powinno wystapic");
+                doing = DecisionType.WAIT;
                 break;
             }
 
         }
         return new Decision(DecisionType.WAIT);
     }
-    //    return new Decision(DecisionType.DELIVER_TO_BOOKSHELF, controlledRobot.getCache().get(0).getIsbn());
 }

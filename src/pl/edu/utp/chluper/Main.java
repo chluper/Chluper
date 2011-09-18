@@ -85,8 +85,8 @@ public class Main {
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.EXECUTOR);
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-A");
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-C");
-                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-D");
-                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-E");
+//                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-D");
+//                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-E");
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.COORDINATOR);
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.DESK);
 
