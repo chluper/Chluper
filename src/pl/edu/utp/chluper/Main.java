@@ -39,7 +39,7 @@ public class Main {
 
 		// tworzenie srodowiska
         final EnvironmantCreator creator = new EnvironmantCreator();
-        final Environment environment = creator.createEnviroment(8, 5, 2, 1, 5);
+        final Environment environment = creator.createEnviroment(8, 5, 2, 3, 5);
 
 		// koordynator
 		final SimpleCoordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
@@ -53,24 +53,24 @@ public class Main {
 		environment.putRobot(robot);
 */
                 Robot robot;
-                robot = new Robot("A", 1);
+                robot = new Robot("A", 2);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("B", 1);
+		robot = new Robot("B", 2);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("C", 1);
+		robot = new Robot("C", 2);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("D", 1);
-		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
-		environment.putRobot(robot);
-                robot = new Robot("E", 1);
-		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
-		environment.putRobot(robot);
-                robot = new Robot("F", 1);
-		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
-		environment.putRobot(robot);
+//		robot = new Robot("D", 3);
+//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
+//		environment.putRobot(robot);
+//                robot = new Robot("E", 3);
+//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
+//		environment.putRobot(robot);
+//                robot = new Robot("F", 3);
+//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
+//		environment.putRobot(robot);
 
 		// tworzenie scenariusza i symulacji
 		final Scenario scenario = new FixedRateScenario(5);
@@ -85,8 +85,9 @@ public class Main {
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.EXECUTOR);
 //		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-A");
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-C");
-//                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-D");
-//                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-E");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-D");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-E");
+                                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-F");
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.COORDINATOR);
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.DESK);
 
@@ -120,7 +121,7 @@ public class Main {
 
 		// uruchamianie 
 		final Timer timer = new Timer();
-		timer.schedule(timerTask, 0, 200);
+		timer.schedule(timerTask, 0, 80);
 
     }
 

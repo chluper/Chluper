@@ -19,10 +19,10 @@ public class SimpleCoordinatorDecision{
 
     private final SimpleCoordinatorDecisionType decisionType;
     private final Integer arg0;
-    private final Book arg1;
+    private final LinkedList<Book> arg1;
     
     
-    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0, Book arg1) {
+    public SimpleCoordinatorDecision(SimpleCoordinatorDecisionType decisionType, Integer arg0, LinkedList<Book> arg1) {
         this.decisionType = decisionType;
         this.arg0 = arg0;
         this.arg1 = arg1;
@@ -47,7 +47,7 @@ public class SimpleCoordinatorDecision{
         return arg0;
     }
 
-    public Book getArg1() {
+    public LinkedList<Book> getArg1() {
         return arg1;
     }
      
