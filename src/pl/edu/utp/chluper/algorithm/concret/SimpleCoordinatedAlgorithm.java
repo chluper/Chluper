@@ -13,8 +13,10 @@ import pl.edu.utp.chluper.environment.view.RobotEnvironmentView;
 import pl.edu.utp.chluper.environment.view.RobotView;
 import pl.edu.utp.chluper.algorithm.concret.SimpleCoordinatorDecisionType;
 import pl.edu.utp.chluper.algorithm.concret.SimpleCoordinatorDecision;
+import pl.edu.utp.chluper.algorithm.graph.Graph;
 import pl.edu.utp.chluper.environment.view.DeskView;
 import pl.edu.utp.chluper.environment.element.Book;
+import pl.edu.utp.chluper.environment.element.Location;
 
 /**
  *
@@ -47,9 +49,36 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                 if (doing == DecisionType.WAIT) {
                     
                     DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
-                    Book book = books.removeLast();
+                    
+                    int position = 0;
+                    
+                    //wyszukiwanie najkrotszej drogi
+                    if(books.size()>=2){
+                        
+                    Location l1 = controlledRobot.getLocation();
+                    Graph g = new Graph(environmentView.getWidth(), environmentView.getHeight(), l1, environmentView.getRobotAreaMarkerViews());
+                    Location l2 = environmentView.getBookshelfViewByIsbn(books.get(position).getIsbn()).getRobotPadLocation();
+                    int min = g.getDistToLocation(l2);
+                   // Book vbook = books.getFirst();
+               //     int position = 0;
+                        for(int i=1; i<books.size();i++){
+                        l2 = environmentView.getBookshelfViewByIsbn(books.get(i).getIsbn()).getRobotPadLocation();
+                        if(g.getDistToLocation(l2)<min){
+                            System.out.println("ZNALEZIONO MINIMUM!");
+                            min=g.getDistToLocation(l2);
+                            position = i;
+                            
+                        }
+                            
+                        }
+                    }
+                    
+                    //funkcja? get te nearest?
+                  //  Book book = books.removeLast();
+                    Book book = books.remove(position);
                     
                     if(books.isEmpty())
+                        //w tym momencie koncza sie ksiazki do wziecia z polki
                     doing = DecisionType.TAKE_FROM_BOOKSHELF;
                     
                     return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, book.getIsbn());
@@ -75,7 +104,6 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
             }
 
             case WAIT: {
-                logger.level2("koordynator: czekaj");
                 doing = DecisionType.WAIT;
                 return new Decision(DecisionType.WAIT);
 
@@ -86,7 +114,6 @@ public class SimpleCoordinatedAlgorithm extends AbstractAlgorithm {
                     
                     DeskView biurko = environmentView.getDeskViewByNumber(decyzja.getArg0());
                     Book book = books.removeFirst();
-                    System.out.println("KSIAZKA DO PODNIESIENIA: "+book.getIsbn());
                     
                     if(books.isEmpty())
                     doing = DecisionType.TAKE_FROM_DESK;

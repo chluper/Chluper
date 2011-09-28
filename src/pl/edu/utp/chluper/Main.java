@@ -53,13 +53,13 @@ public class Main {
 		environment.putRobot(robot);
 */
                 Robot robot;
-                robot = new Robot("A", 2);
+                robot = new Robot("A", 5);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("B", 2);
+		robot = new Robot("B", 5);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("C", 2);
+		robot = new Robot("C", 5);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
 //		robot = new Robot("D", 3);
@@ -100,8 +100,8 @@ public class Main {
         frame.pack();
         frame.setVisible(true);
 
-//		// przeskok taktow
-//		for (int i = 0; i < 170; i++) {
+	//        przeskok taktow
+//		for (int i = 0; i < 1700000; i++) {
 //			simulation.tick();
 //		}
 

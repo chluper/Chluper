@@ -124,10 +124,10 @@ public class SimpleCoordinator extends AbstractCoordinator {
         return number;
     }
 
-    private void returnDeskNumber() {
+    /*private void returnDeskNumber() {
         desks.addLast(desks.removeFirst());
     }
-
+*/
     public SimpleCoordinatorDecision getSimpleCoordinatorDecision(RobotView robot) {
         if (zadania.containsKey(robot.getName())) {
             return zadania.get(robot.getName());
