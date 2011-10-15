@@ -4,30 +4,24 @@
  */
 package pl.edu.utp.chluper.algorithm.concret;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import pl.edu.utp.chluper.algorithm.util.AbstractCoordinator;
+import pl.edu.utp.chluper.environment.element.Book;
 import pl.edu.utp.chluper.environment.view.DeskView;
 import pl.edu.utp.chluper.environment.view.RobotEnvironmentView;
-import pl.edu.utp.chluper.environment.view.RobotView;
 
 /**
  *
  * @author kinga
  */
 public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
+//
 
-    private LinkedList<Integer> desks = new LinkedList<Integer>();  //biurka
-    private HashMap<String, Enum> robotTaskToDo = new HashMap<String, Enum>(); // zadania robotów
-    private HashMap<Integer, String> robotBookToDo = new HashMap<Integer, String>(); //książki dla robotów
-    private HashMap<String, Integer> robotDeskToDo = new HashMap<String, Integer>(); //biurko dla robota
-
-    enum RobotDecision {
-
-        DELIVER_TO_DESK,
-        DELIVER_TO_BOOKSHELF,
-        WAIT;
-    }
+    private LinkedList<Integer> desks = new LinkedList<Integer>();  //biurka 
+    private HashMap<String, Enum> robotState = new HashMap<String, Enum>(); // stan Robota
+    private ArrayList<RobotTask> robotTask = new ArrayList<RobotTask>();    // zadania Robota
 
     public SimpleCoordinatorBookSeparation(RobotEnvironmentView environmentView) {
         //tworzenie listy biurek, które znajdują się w bibliotece
@@ -37,15 +31,7 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
     }
 
     public void coordinate(RobotEnvironmentView environmentView) {
-        //Tworzenie listy robotów, jakie są dostępne
-        if (robotTaskToDo.isEmpty()) {
-            for (RobotView robot : environmentView.getRobotViews()) {
-                robotTaskToDo.put(robot.getName(), RobotDecision.WAIT);
-            }
-            logger.level2("Koordynator utworzył listę dostępnych robotów. Robotów czekających na zadanie: " + robotTaskToDo.size());
-        }
 
-        //wybieranie biurka do obsługi
         DeskView deskWithWishes = null;
         for (int i = 0; i < desks.size(); i++) {
             int number = nextDeskNumber();
@@ -56,128 +42,36 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
             }
         }
 
-        //Jeśli jest biurko, które coś zwiera
         if (deskWithWishes != null) {
             //Jeśli jest jakiś robot, który się nudzi
-            if (robotTaskToDo.containsValue(RobotDecision.WAIT)) {
-                for (String robotFree : robotTaskToDo.keySet()) {
+            if (robotState.containsValue(RobotState.WAITING_FOR_TASK)) {
+                for (String robotFree : robotState.keySet()) {
                     //Jeśli to jest właśnie ten robot
-                    if (robotTaskToDo.get(robotFree).equals(RobotDecision.WAIT)) {
-                        //Jeśli są książki do oddania
-                        if (!deskWithWishes.getBooksToReturn().isEmpty() && !robotBookToDo.containsValue(robotFree)) {
-                            //Pobieranie książki do zwrotu
-                            getBooksToReturn(robotFree, deskWithWishes);
+                    if (robotState.get(robotFree).equals(RobotState.WAITING_FOR_TASK)) {
+                        //Jeśli są książki do oddania       
+                        if (!deskWithWishes.getBooksToReturn().isEmpty()) {
+                            for (int i = 0; i < deskWithWishes.getBooksToReturn().size(); i++) {
+                                if (taskBookToReturnExist(deskWithWishes.getBooksToReturn().get(i), deskWithWishes.getNumber()) == false) {
+                                    if (robotTask(robotFree).size() < environmentView.getRobotViewByName(robotFree).getCacheLimit()) {
+                                        robotTask.add(new RobotTask(deskWithWishes.getNumber(), robotFree, -1, deskWithWishes.getBooksToReturn().get(i), RobotTaskToDo.DELIVER_TO_BOOKSHELF, false));
+                                    }
+                                }
+                            }
                         }
                         //Jeśli są książki do przyniesienia
-                        if (!deskWithWishes.getWishList().isEmpty() && !robotBookToDo.containsValue(robotFree)) {
-                            //Pobieranie ksiązki do przyniesienia
-                            getBooksFromWishList(robotFree, deskWithWishes);
+                        if (!deskWithWishes.getWishList().isEmpty()) {
+                            for (int i = 0; i < deskWithWishes.getWishList().size(); i++) {
+                                if (taskBookToLend(deskWithWishes.getWishList().get(i), deskWithWishes.getNumber()) == false) {
+                                    if (robotTask(robotFree).size() < environmentView.getRobotViewByName(robotFree).getCacheLimit()) {
+                                        robotTask.add(new RobotTask(deskWithWishes.getNumber(), robotFree, deskWithWishes.getWishList().get(i), null, RobotTaskToDo.DELIVER_TO_DESK, false));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-
-            /*
-             * Sprawdzanie czy zadania zostały zakończone: jeśli książki nie ma
-             * na biurku albo w kieszonce robota oznacza, że zadanie zostało
-             * skończone. Sprawdzanie następuję zgodnie z przydzielonymi 
-             * zadaniami: DELIVER_TO_BOOKSHELF i DELIVER_TO_DESK
-             */
-            for (RobotView robot : environmentView.getRobotViews()) {
-                switch (taskToDo(robot.getName())) {
-                    case DELIVER_TO_BOOKSHELF:
-                        //jeśli są jakieś biurka obsługiwane przez robota
-                        if (robotDeskToDo.containsKey(robot.getName())) {
-                            //przypisujemy ksiązki, które obsługuje
-                            int bookToFinish = finishBookToReturn(robot, environmentView.getDeskViewByNumber(deskToDo(robot.getName())));
-                            //Jeśli książka została obslużona, czyli nie ma jej na biurku ani w kieszonce robota
-                            if (bookToFinish != -1) {
-                                logger.level2("Robot: " + robot + " Zakończył obsługiwanie książki z zadania: " + robotTaskToDo.get(robot.getName()));
-                                //Następuje kończenie zadania, tzn usuwanie ksiązki z HashMapty robotBookToDo
-                                robotBookToDo.remove(bookToFinish);
-                                //Jeśli wszystkie książki, które robot miał obsłużyć są juz usunięte, tzn w robotBookToDo nie ma wartości z nazwą robota
-                                if (!robotBookToDo.containsValue(robot.getName())) {
-                                    logger.level2("Robot: " + robot + " Zakończył zadanie: " + robotTaskToDo.get(robot.getName()));
-                                    //Oznacza, że robot skończył obsługiwać biurko i należy usunąć z listy robotDeskToDo
-                                    robotDeskToDo.remove(robot.getName());
-                                    //A robot jest juz wolny i ponownie się nudzi.
-                                    robotTaskToDo.put(robot.getName(), RobotDecision.WAIT);
-                                }
-                            }
-                        }
-                        break;
-                    case DELIVER_TO_DESK:
-                        //jeśli są jakieś biurka obsługiwane przez robota
-                        if (robotDeskToDo.containsKey(robot.getName())) {
-                            //przypisujemy ksiązki, które obsługuje
-                            int bookToFinish = finishBookFromWishList(robot, environmentView.getDeskViewByNumber(deskToDo(robot.getName())));
-                            //Jeśli książka została obslużona, czyli nie ma jej na biurku ani w kieszonce robota
-                            if (bookToFinish != -1) {
-                                logger.level2("Robot: " + robot + " Zakończył obsługiwanie książki z zadania: " + robotTaskToDo.get(robot.getName()));
-                                //Następuje kończenie zadania, tzn usuwanie ksiązki z HashMapty robotBookToDo
-                                robotBookToDo.remove(bookToFinish);
-                                //Jeśli wszystkie książki, które robot miał obsłużyć są juz usunięte, tzn w robotBookToDo nie ma wartości z nazwą robota
-                                if (!robotBookToDo.containsValue(robot.getName())) {
-                                    logger.level2("Robot: " + robot + " Zakończył zadanie: " + robotTaskToDo.get(robot.getName()));
-                                    //Oznacza, że robot skończył obsługiwać biurko i należy usunąć z listy robotDeskToDo
-                                    robotDeskToDo.remove(robot.getName());
-                                    //A robot jest juz wolny i ponownie się nudzi.
-                                    robotTaskToDo.put(robot.getName(), RobotDecision.WAIT);
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
-    }
-
-    /**
-     * Metoda wybierająca ksiązki booksToReturn, które należy przydzielić do robotów
-     * @param robot - nazwa robota
-     * @param deskWithWishes - biurko z życzeniami
-     * @return 
-     */
-    private HashMap getBooksToReturn(String robot, DeskView deskWithWishes) {
-        for (int i = 0; i < deskWithWishes.getBooksToReturn().size(); i++) {
-            //jeśli wybrana książka nie jest przydzielona do żadnego robota
-            if (!robotBookToDo.containsKey(deskWithWishes.getBooksToReturn().get(i).hashCode())) {
-                //wpisanie ksiązki do robotBookToDo
-                robotBookToDo.put(deskWithWishes.getBooksToReturn().get(i).hashCode(), robot);
-                //przypisanie biurka do robota 
-                robotDeskToDo.put(robot, deskWithWishes.getNumber());
-                //zmiana zadania dla robota
-                robotTaskToDo.put(robot, RobotDecision.DELIVER_TO_BOOKSHELF);
-                logger.level2("Książką do oddania numer " + deskWithWishes.getBooksToReturn().get(i) + " hashCode " + deskWithWishes.getBooksToReturn().get(i).hashCode() + " Zajmie się robot: " + robot);
-                break;
-            }
-        }
-        return robotBookToDo;
-    }
-
-    /**
-     * Metoda wybierająca książki z WihsList, które należy obsłużyć
-     * @param robot - widok robota
-     * @param deskWithWishes - biurko z życzeniami
-     * @return 
-     */
-    private HashMap getBooksFromWishList(String robot, DeskView deskWithWishes) {
-        for (int i = 0; i < deskWithWishes.getWishList().size(); i++) {
-            //jeśli wybrana książka nie jest przydzielona do żadnego robota
-            if (!robotBookToDo.containsKey(deskWithWishes.getWishList().get(i).hashCode())) {
-                //wpisanie ksiązki do robotBookToDo
-                robotDeskToDo.put(robot, deskWithWishes.getNumber());
-                //przypisanie biurka do robota 
-                robotBookToDo.put(deskWithWishes.getWishList().get(i).hashCode(), robot);
-                //zmiana zadania dla robota
-                robotTaskToDo.put(robot, RobotDecision.DELIVER_TO_DESK);
-                logger.level2("Książką do przyniesienia numer " + deskWithWishes.getWishList().get(i) + " hashCode " + deskWithWishes.getWishList().get(i).hashCode() + " Zajmie się robot: " + robot);
-                break;
-            }
-        }
-        return robotBookToDo;
     }
 
     /**
@@ -191,109 +85,79 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
     }
 
     /**
-     * Metoda odpowiadająca za sprawdzenie czy książka do oddania została już 
-     * odniesiona na pułkę i czy robot skończył zadanie.
-     * @param robot - widok robota
-     * @param desk - widok biurka
+     * Metoda do sprawdzania czy nie została już wcześniej zapisana do 
+     * jakiegoś robota książka do zwrotu
+     * @param bookToReturn
+     * @param deskNumber
+     * @return 
      */
-    private int finishBookToReturn(RobotView robot, DeskView desk) {
-        boolean steelExistOnDesk = false;   //ksiązka jest caly czas na biurku
-        boolean steelExistInRobotCache = false; //książka jest cały czas w kieszące robota
-        int bookTofinish = bookToDo(robot.getName());
-        for (int i = 0; i < desk.getBooksToReturn().size(); i++) {
-            if (desk.getBooksToReturn().get(i).hashCode() == bookTofinish) {
-                steelExistOnDesk = true;
-                break;
-            } else {
-                steelExistOnDesk = false;
+    private boolean taskBookToReturnExist(Book bookToReturn, int deskNumber) {
+        for (RobotTask tasks : robotTask) {
+            if (tasks.getRobotTaskToDo().equals(RobotTaskToDo.DELIVER_TO_BOOKSHELF) && tasks.getBookToReturn().equals(bookToReturn) && tasks.getDeskNumber() == deskNumber) {
+                return true;
             }
         }
-        for (int i = 0; i < robot.getCache().size(); i++) {
-            if (robot.getCache().get(i).hashCode() == bookTofinish) {
-                steelExistInRobotCache = true;
-                break;
-            } else {
-                steelExistInRobotCache = false;
-            }
-        }
-        if (steelExistInRobotCache == false && steelExistOnDesk == false) {
-            return bookTofinish;
-        } else {
-            return -1;
-        }
+        return false;
     }
 
     /**
-     * Metoda odpowiadająca za sprawdzenie czy książka z wishlist została już
-     * dostarczona do studenta
-     * @param robot
-     * @param desk
+     * Metoda sprawdzająca czy nie została wcześniej przypisana do 
+     * jakiegoś robota książka do wypożyczenia
+     * @param bookToLend
+     * @param deskNumber
      * @return 
      */
-    private int finishBookFromWishList(RobotView robot, DeskView desk) {
-        boolean steelExistOnList = false;
-        boolean steelExistInRobotCache = false;
-        int bookTofinish = bookToDo(robot.getName());
-        for (int i = 0; i < desk.getWishList().size(); i++) {
-            if (desk.getWishList().get(i).hashCode() == bookTofinish) {
-                steelExistOnList = true;
-                break;
-            } else {
-                steelExistOnList = false;
+    private boolean taskBookToLend(int bookToLend, int deskNumber) {
+        for (RobotTask tasks : robotTask) {
+            if (tasks.getRobotTaskToDo().equals(RobotTaskToDo.DELIVER_TO_DESK) && tasks.getBookToLend() == bookToLend && tasks.getDeskNumber() == deskNumber) {
+                return true;
             }
         }
-        for (int i = 0; i < robot.getCache().size(); i++) {
-            if (robot.getCache().get(i).hashCode() == bookTofinish) {
-                steelExistInRobotCache = true;
-                break;
-            } else {
-                steelExistInRobotCache = false;
-            }
-        }
-        if (steelExistInRobotCache == false && steelExistOnList == false) {
-            return bookTofinish;
-        } else {
-            return -1;
-        }
+        return false;
     }
 
     /**
-     * Wybieranie zadania, które jest przypisane do robot
-     * @param robot
+     * metoda pobierająca zadanie do zrobienia przez robota
+     * @param robotName
      * @return 
      */
-    public RobotDecision taskToDo(String robot) {
-        return (RobotDecision) robotTaskToDo.get(robot);
-    }
-
-    /**
-     * Wybieranie biurka, które robot ma obsłużyć
-     * @param robot
-     * @return 
-     */
-    public int deskToDo(String robot) {
-        if (robotDeskToDo.containsKey(robot)) {
-            return robotDeskToDo.get(robot);
-        } else {
-            return -1;
-        }
-    }
-
-    /**
-     * Wybieranie ksiązki, która ma zostac obsłużona
-     * @param robot
-     * @return 
-     */
-    public int bookToDo(String robot) {
-        if (robotBookToDo.containsValue(robot)) {
-            for (int bookToDo : robotBookToDo.keySet()) {
-                if (robotBookToDo.get(bookToDo).equals(robot)) {
-                    return bookToDo;
-                }
+    public ArrayList<RobotTask> robotTask(String robotName) {
+        ArrayList<RobotTask> robotTasks = new ArrayList<RobotTask>();
+        for (RobotTask task : robotTask) {
+            if (task.getRobotName().equals(robotName)) {// && task.isIsInCache()==state) {
+                robotTasks.add(task);
             }
-            return -1;
-        } else {
-            return -1;
         }
+        return robotTasks;
+    }
+
+    /**
+     * Ustawia aktualny stan robota
+     * @param robotName
+     * @param robotTask
+     * @return 
+     */
+    public HashMap<String, Enum> setRobotState(String robotName, RobotState robotTask) {
+        robotState.put(robotName, robotTask);
+        return robotState;
+    }
+
+    /**
+     * Pobiera aktualny stan robota
+     * @param robotName
+     * @return 
+     */
+    public RobotState getRobotState(String robotName) {
+        return (RobotState) robotState.get(robotName);
+    }
+
+    /**
+     * kończy zadanie
+     * @param task
+     * @return 
+     */
+    public ArrayList<RobotTask> finishTask(RobotTask task) {
+        robotTask.remove(task);
+        return robotTask;
     }
 }

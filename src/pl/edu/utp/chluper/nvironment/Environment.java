@@ -36,514 +36,542 @@ import pl.edu.utp.chluper.simulation.logging.LoggingAgent;
  */
 public class Environment {
 
-	// szerokosc
-	private final int width;
-	// dlugosc
-	private final int height;
-	// polki
-	private final Set<Bookshelf> bookshelfs = new HashSet<Bookshelf>();
-	// biorka
-	private final Set<Desk> desks = new HashSet<Desk>();
-	// roboty
-	private final Set<Robot> robots = new HashSet<Robot>();
-	// studenci
-	private final Set<Student> students = new HashSet<Student>();
-	// przeszkody
-	private final Set<Obstruction> obstructions = new HashSet<Obstruction>();
-	// znaczniki
-	private final Set<Marker> markers = new HashSet<Marker>();
+    // szerokosc
+    private final int width;
+    // dlugosc
+    private final int height;
+    // polki
+    private final Set<Bookshelf> bookshelfs = new HashSet<Bookshelf>();
+    // biorka
+    private final Set<Desk> desks = new HashSet<Desk>();
+    // roboty
+    private final Set<Robot> robots = new HashSet<Robot>();
+    // studenci
+    private final Set<Student> students = new HashSet<Student>();
+    // przeszkody
+    private final Set<Obstruction> obstructions = new HashSet<Obstruction>();
+    // znaczniki
+    private final Set<Marker> markers = new HashSet<Marker>();
 
-	/**
-	 * Tworzy srodowisko
-	 * @param width
-	 * @param height
-	 * @param elements elementy srodowiska
-	 */
-	public Environment(int width, int height, Collection<Element> elements) {
-		this.width = width;
-		this.height = height;
+    /**
+     * Tworzy srodowisko
+     * @param width
+     * @param height
+     * @param elements elementy srodowiska
+     */
+    public Environment(int width, int height, Collection<Element> elements) {
+        this.width = width;
+        this.height = height;
 
-		// umieszczanie elementow we wlasciwych kolekcjach
-		for (Element element : elements) {
-			switch (element.getElementType()) {
-				case BOOKSHELF:
-					this.bookshelfs.add((Bookshelf) element);
-					break;
-				case DESK:
-					this.desks.add((Desk) element);
-					break;
-				case OBSTRUCTION:
-					this.obstructions.add((Obstruction) element);
-					break;
-				case ROBOT:
-					this.robots.add((Robot) element);
-					break;
-				case ROBOT_AREA:
-				case ROBOT_START_POINT:
-				case STUDENT_AREA:
-				case STUDENT_ENTRY:
-				case STUDENT_EXIT:
-					this.markers.add((Marker) element);
-					break;
-				default:
-					throw new EnvinronmentException("Element srodowiska: " + element + "nie powinien sie tu znalezc");
-			}
-		}
-	}
+        // umieszczanie elementow we wlasciwych kolekcjach
+        for (Element element : elements) {
+            switch (element.getElementType()) {
+                case BOOKSHELF:
+                    this.bookshelfs.add((Bookshelf) element);
+                    break;
+                case DESK:
+                    this.desks.add((Desk) element);
+                    break;
+                case OBSTRUCTION:
+                    this.obstructions.add((Obstruction) element);
+                    break;
+                case ROBOT:
+                    this.robots.add((Robot) element);
+                    break;
+                case ROBOT_AREA:
+                case ROBOT_START_POINT:
+                case STUDENT_AREA:
+                case STUDENT_ENTRY:
+                case STUDENT_EXIT:
+                    this.markers.add((Marker) element);
+                    break;
+                default:
+                    throw new EnvinronmentException("Element srodowiska: " + element + "nie powinien sie tu znalezc");
+            }
+        }
+    }
 
-	/**
-	 * Konstruktor tworzy domyslne srodowisko
-	 */
-	public Environment() {
-		width = 16;
-		height = 16;
-	}
+    /**
+     * Konstruktor tworzy domyslne srodowisko
+     */
+    public Environment() {
+        width = 16;
+        height = 16;
+    }
 
-	/**
-	 * Zwraca wysokosc srodowiska
-	 * @return
-	 */
-	public int getWidth() {
-		return width;
-	}
+    /**
+     * Zwraca wysokosc srodowiska
+     * @return
+     */
+    public int getWidth() {
+        return width;
+    }
 
-	/**
-	 * Zwraca wysokosc (ilosc elementow) srodowiska
-	 * @return
-	 */
-	public int getHeight() {
-		return height;
-	}
+    /**
+     * Zwraca wysokosc (ilosc elementow) srodowiska
+     * @return
+     */
+    public int getHeight() {
+        return height;
+    }
 
-	/**
-	 * Zwraca polki na ksiazki
-	 * @return
-	 */
-	public Set<Bookshelf> getBookshelfs() {
-		return bookshelfs;
-	}
+    /**
+     * Zwraca polki na ksiazki
+     * @return
+     */
+    public Set<Bookshelf> getBookshelfs() {
+        return bookshelfs;
+    }
 
-	/**
-	 * Zwraca widoki polek
-	 * @return
-	 */
-	public Collection<BookshelfView> getBookshelfViews() {
-		Set<BookshelfView> set = new HashSet<BookshelfView>();
-		for (Bookshelf bookshelf : bookshelfs) {
-			set.add(bookshelf.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki polek
+     * @return
+     */
+    public Collection<BookshelfView> getBookshelfViews() {
+        Set<BookshelfView> set = new HashSet<BookshelfView>();
+        for (Bookshelf bookshelf : bookshelfs) {
+            set.add(bookshelf.getElementView());
+        }
+        return set;
+    }
 
-	/**
-	 * Zwraca przeszkody
-	 * @return
-	 */
-	public Set<Obstruction> getObstructions() {
-		return obstructions;
-	}
+    /**
+     * Zwraca przeszkody
+     * @return
+     */
+    public Set<Obstruction> getObstructions() {
+        return obstructions;
+    }
 
-	/**
-	 * Zwraca widoki przeszkod
-	 * @return
-	 */
-	public Collection<ObstructionView> getObstructionViews() {
-		Set<ObstructionView> set = new HashSet<ObstructionView>();
-		for (Obstruction obstruction : obstructions) {
-			set.add(obstruction.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki przeszkod
+     * @return
+     */
+    public Collection<ObstructionView> getObstructionViews() {
+        Set<ObstructionView> set = new HashSet<ObstructionView>();
+        for (Obstruction obstruction : obstructions) {
+            set.add(obstruction.getElementView());
+        }
+        return set;
+    }
 
-	/**
-	 * zwraca biurka
-	 * @return
-	 */
-	public Set<Desk> getDesks() {
-		return desks;
-	}
+    /**
+     * zwraca biurka
+     * @return
+     */
+    public Set<Desk> getDesks() {
+        return desks;
+    }
 
-	/**
-	 * Zwraca widoki biurek
-	 * @return
-	 */
-	public Collection<DeskView> getDeskViews() {
-		Set<DeskView> set = new HashSet<DeskView>();
-		for (Desk desk : desks) {
-			set.add(desk.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki biurek
+     * @return
+     */
+    public Collection<DeskView> getDeskViews() {
+        Set<DeskView> set = new HashSet<DeskView>();
+        for (Desk desk : desks) {
+            set.add(desk.getElementView());
+        }
+        return set;
+    }
 
-	/**
-	 * Zwraca znaczniki
-	 * @return
-	 */
-	public Set<Marker> getMarkers() {
-		return markers;
-	}
+    /**
+     * Zwraca znaczniki
+     * @return
+     */
+    public Set<Marker> getMarkers() {
+        return markers;
+    }
 
-	/**
-	 * Zwraca widoki markerow
-	 * @return
-	 */
-	public Collection<MarkerView> getMarkerViews() {
-		Set<MarkerView> set = new HashSet<MarkerView>();
-		for (Marker marker : markers) {
-			set.add(marker.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki markerow
+     * @return
+     */
+    public Collection<MarkerView> getMarkerViews() {
+        Set<MarkerView> set = new HashSet<MarkerView>();
+        for (Marker marker : markers) {
+            set.add(marker.getElementView());
+        }
+        return set;
+    }
 
-	/**
-	 * Zwraca widoki markerow okreslonego typu
-	 * @return
-	 */
-	public Collection<MarkerView> getMarkerViewsByType(ElementType type) {
-		Set<MarkerView> set = new HashSet<MarkerView>();
-		for (Marker marker : markers) {
-			if (marker.getElementType() == type) {
-				set.add(marker.getElementView());
-			}
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki markerow okreslonego typu
+     * @return
+     */
+    public Collection<MarkerView> getMarkerViewsByType(ElementType type) {
+        Set<MarkerView> set = new HashSet<MarkerView>();
+        for (Marker marker : markers) {
+            if (marker.getElementType() == type) {
+                set.add(marker.getElementView());
+            }
+        }
+        return set;
+    }
 
-	/**
-	 * Zwraca roboty
-	 * @return
-	 */
-	public Set<Robot> getRobots() {
-		return robots;
-	}
+    /**
+     * Zwraca roboty
+     * @return
+     */
+    public Set<Robot> getRobots() {
+        return robots;
+    }
 
-	/**
-	 * Zwraca widoki biurek
-	 * @return
-	 */
-	public Collection<RobotView> getRobotViews() {
-		Set<RobotView> set = new HashSet<RobotView>();
-		for (Robot robot : robots) {
-			set.add(robot.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki biurek
+     * @return
+     */
+    public Collection<RobotView> getRobotViews() {
+        Set<RobotView> set = new HashSet<RobotView>();
+        for (Robot robot : robots) {
+            set.add(robot.getElementView());
+        }
+        return set;
+    }
 
-	/**
-	 * Zwraca studentow
-	 * @return
-	 */
-	public Set<Student> getStudents() {
-		return students;
-	}
+    /**
+     * Zwraca studentow
+     * @return
+     */
+    public Set<Student> getStudents() {
+        return students;
+    }
 
-	/**
-	 * Zwraca widoki biurek
-	 * @return
-	 */
-	public Collection<StudentView> getStudentViews() {
-		Set<StudentView> set = new HashSet<StudentView>();
-		for (Student student : students) {
-			set.add(student.getElementView());
-		}
-		return set;
-	}
+    /**
+     * Zwraca widoki biurek
+     * @return
+     */
+    public Collection<StudentView> getStudentViews() {
+        Set<StudentView> set = new HashSet<StudentView>();
+        for (Student student : students) {
+            set.add(student.getElementView());
+        }
+        return set;
+    }
 
-	@Override
-	public String toString() {
-		return "[" + this.getClass().getSimpleName() + "|" + width + "|" + height + "]";
-	}
+    @Override
+    public String toString() {
+        return "[" + this.getClass().getSimpleName() + "|" + width + "|" + height + "]";
+    }
 
-	/**
-	 * Metoda wyluskuje polke na podstawie isbn ksiazki
-	 * @param isbn
-	 * @return
-	 */
-	public Bookshelf getBookshelfByIsbn(int isbn) {
-		for (Bookshelf bookshelf : bookshelfs) {
-			if (bookshelf.isValidIsbn(isbn)) {
-				return bookshelf;
-			}
-		}
-		throw new EnvinronmentException("Nie odlaleziono polki z ksiazka o ISBN: " + isbn);
-	}
+    /**
+     * Metoda wyluskuje polke na podstawie isbn ksiazki
+     * @param isbn
+     * @return
+     */
+    public Bookshelf getBookshelfByIsbn(int isbn) {
+        for (Bookshelf bookshelf : bookshelfs) {
+            if (bookshelf.isValidIsbn(isbn)) {
+                return bookshelf;
+            }
+        }
+        throw new EnvinronmentException("Nie odlaleziono polki z ksiazka o ISBN: " + isbn);
+    }
 
-	/**
-	 * Metoda wyluskuje polke na podstawie isbn ksiazki
-	 * @param isbn
-	 * @return
-	 */
-	public Desk getDeskByNumber(int number) {
-		for (Desk desk : desks) {
-			if (desk.getNumber() == number) {
-				return desk;
-			}
-		}
-		throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
-	}
+    /**
+     * Metoda wyluskuje polke na podstawie isbn ksiazki
+     * @param isbn
+     * @return
+     */
+    public Desk getDeskByNumber(int number) {
+        for (Desk desk : desks) {
+            if (desk.getNumber() == number) {
+                return desk;
+            }
+        }
+        throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
+    }
 
-	/**
-	 * Dodaje robota do srodowiska i ustala polozenie na punkcie startowym
-	 * @param robot
-	 */
-	public void putRobot(Robot robot) {
-		// wyszukiwanie lokalizacji
-		Location location = null;
-		for (Element element : markers) {
-			if (element.getElementType().equals(ElementType.ROBOT_START_POINT)) {
-				location = element.getLocation();
-			}
-		}
-		// jesli to null to cos nie tak
-		if (location == null) {
-			throw new EnvinronmentException("Brak miejsca startowego dla robota: " + robot);
-		}
-		// zapis robota
-		robot.setLocation(location);
-		robots.add(robot);
-	}
+    /**
+     * @author Kinga
+     * Zwracanie robota o określonej nazwie
+     * @param name
+     * @return 
+     */
+    public Robot getRobotByName(String name) {
+        for (Robot robot : robots) {
+            if (robot.getName().equals(name)) {
+                return robot;
+            }
+        }
+        throw new EnvinronmentException("Nie odlaleziono robota o podanej nazwie: " + name);
+    }
 
-	/**
-	 * Dodawanie studenta
-	 * @param student
-	 */
-	public void addStudent(Student student) {
-		students.add(student);
-	}
+    /**
+     * Dodaje robota do srodowiska i ustala polozenie na punkcie startowym
+     * @param robot
+     */
+    public void putRobot(Robot robot) {
+        // wyszukiwanie lokalizacji
+        Location location = null;
+        for (Element element : markers) {
+            if (element.getElementType().equals(ElementType.ROBOT_START_POINT)) {
+                location = element.getLocation();
+            }
+        }
+        // jesli to null to cos nie tak
+        if (location == null) {
+            throw new EnvinronmentException("Brak miejsca startowego dla robota: " + robot);
+        }
+        // zapis robota
+        robot.setLocation(location);
+        robots.add(robot);
+    }
 
-	/**
-	 * Usuwanie studenta
-	 * @param student
-	 */
-	public void removeStudent(Student student) {
-		students.remove(student);
-	}
+    /**
+     * Dodawanie studenta
+     * @param student
+     */
+    public void addStudent(Student student) {
+        students.add(student);
+    }
 
-	/**
-	 * Metoda zwraca pelen widok srodowiska
-	 * @return
-	 */
-	public FullEnvironmentView getFullEnvironmentView() {
-		final Set<ElementView> elementViews = new HashSet<ElementView>();
-		elementViews.addAll(getBookshelfViews());
-		elementViews.addAll(getDeskViews());
-		elementViews.addAll(getObstructionViews());
-		elementViews.addAll(getMarkerViews());
-		elementViews.addAll(getRobotViews());
-		elementViews.addAll(getStudentViews());
+    /**
+     * Usuwanie studenta
+     * @param student
+     */
+    public void removeStudent(Student student) {
+        students.remove(student);
+    }
 
-		return new FullEnvironmentView() {
+    /**
+     * Metoda zwraca pelen widok srodowiska
+     * @return
+     */
+    public FullEnvironmentView getFullEnvironmentView() {
+        final Set<ElementView> elementViews = new HashSet<ElementView>();
+        elementViews.addAll(getBookshelfViews());
+        elementViews.addAll(getDeskViews());
+        elementViews.addAll(getObstructionViews());
+        elementViews.addAll(getMarkerViews());
+        elementViews.addAll(getRobotViews());
+        elementViews.addAll(getStudentViews());
 
-			public int getWidth() {
-				return width;
-			}
+        return new FullEnvironmentView() {
 
-			public int getHeight() {
-				return height;
-			}
+            public int getWidth() {
+                return width;
+            }
 
-			public Collection<ElementView> getAllElementViews() {
-				return elementViews;
-			}
-		};
-	}
+            public int getHeight() {
+                return height;
+            }
 
-	/**
-	 * Metoda zwraca widok zmieniajacych sie elementow srodowiska
-	 * @return
-	 */
-	public ChangingEnvironmentView getChangingEnvironmentView() {
-		final Environment environment = this;
-		return new ChangingEnvironmentView() {
+            public Collection<ElementView> getAllElementViews() {
+                return elementViews;
+            }
+        };
+    }
 
-			// zatrzaskiwanie
-			private final Collection<RobotView> robotViewsCopy = environment.getRobotViews();
-			private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
-			private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
+    /**
+     * Metoda zwraca widok zmieniajacych sie elementow srodowiska
+     * @return
+     */
+    public ChangingEnvironmentView getChangingEnvironmentView() {
+        final Environment environment = this;
+        return new ChangingEnvironmentView() {
 
-			public Collection<StudentView> getStudentViews() {
-				return studentViewsCopy;
-			}
+            // zatrzaskiwanie
+            private final Collection<RobotView> robotViewsCopy = environment.getRobotViews();
+            private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
+            private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
 
-			public Collection<RobotView> getRobotViews() {
-				return robotViewsCopy;
-			}
+            public Collection<StudentView> getStudentViews() {
+                return studentViewsCopy;
+            }
 
-			public Collection<DeskView> getDeskViews() {
-				return deskViewsCopy;
-			}
+            public Collection<RobotView> getRobotViews() {
+                return robotViewsCopy;
+            }
 
-			public int getWidth() {
-				return width;
-			}
+            public Collection<DeskView> getDeskViews() {
+                return deskViewsCopy;
+            }
 
-			public int getHeight() {
-				return height;
-			}
+            public int getWidth() {
+                return width;
+            }
 
-			public Collection<ElementView> getAllElementViews() {
-				Set<ElementView> set = new HashSet<ElementView>();
-				set.addAll(robotViewsCopy);
-				set.addAll(studentViewsCopy);
-				return set;
-			}
-		};
-	}
+            public int getHeight() {
+                return height;
+            }
 
-	/**
-	 * Metoda zwraca widok przeznaczny dla robota
-	 * @return
-	 */
-	public RobotEnvironmentView getRobotEnvironmentView() {
-		final Environment environment = this;
-		return new RobotEnvironmentView() {
+            public Collection<ElementView> getAllElementViews() {
+                Set<ElementView> set = new HashSet<ElementView>();
+                set.addAll(robotViewsCopy);
+                set.addAll(studentViewsCopy);
+                return set;
+            }
+        };
+    }
 
-			// zatrzaskiwanie
-			private final Collection<RobotView> robotViewsCopy = environment.getRobotViews();
-			private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
-			private final Collection<BookshelfView> bookshelfViewsCopy = environment.getBookshelfViews();
-			private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
-			private final Collection<MarkerView> robotAreaMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.ROBOT_AREA);
+    /**
+     * Metoda zwraca widok przeznaczny dla robota
+     * @return
+     */
+    public RobotEnvironmentView getRobotEnvironmentView() {
+        final Environment environment = this;
+        return new RobotEnvironmentView() {
 
-			public Collection<BookshelfView> getBookshelfViews() {
-				return bookshelfViewsCopy;
-			}
+            // zatrzaskiwanie
+            private final Collection<RobotView> robotViewsCopy = environment.getRobotViews();
+            private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
+            private final Collection<BookshelfView> bookshelfViewsCopy = environment.getBookshelfViews();
+            private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
+            private final Collection<MarkerView> robotAreaMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.ROBOT_AREA);
 
-			public Collection<DeskView> getDeskViews() {
-				return deskViewsCopy;
-			}
+            public Collection<BookshelfView> getBookshelfViews() {
+                return bookshelfViewsCopy;
+            }
 
-			public Collection<MarkerView> getRobotAreaMarkerViews() {
-				return robotAreaMarkerViewsCopy;
-			}
+            public Collection<DeskView> getDeskViews() {
+                return deskViewsCopy;
+            }
 
-			public Collection<RobotView> getRobotViews() {
-				return robotViewsCopy;
-			}
+            public Collection<MarkerView> getRobotAreaMarkerViews() {
+                return robotAreaMarkerViewsCopy;
+            }
 
-			public BookshelfView getBookshelfViewByIsbn(int isbn) {
-				for (BookshelfView bookshelfView : bookshelfViewsCopy) {
-					if (bookshelfView.isValidIsbn(isbn)) {
-						return bookshelfView;
-					}
-				}
-				throw new EnvinronmentException("Nie odlaleziono polki ktora by zawierala ksiazke o isbn: " + isbn);
-			}
+            public Collection<RobotView> getRobotViews() {
+                return robotViewsCopy;
+            }
 
-			public DeskView getDeskViewByNumber(int number) {
-				for (DeskView deskView : deskViewsCopy) {
-					if (deskView.getNumber() == number) {
-						return deskView;
-					}
-				}
-				throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
-			}
+            public BookshelfView getBookshelfViewByIsbn(int isbn) {
+                for (BookshelfView bookshelfView : bookshelfViewsCopy) {
+                    if (bookshelfView.isValidIsbn(isbn)) {
+                        return bookshelfView;
+                    }
+                }
+                throw new EnvinronmentException("Nie odlaleziono polki ktora by zawierala ksiazke o isbn: " + isbn);
+            }
 
-			public int getWidth() {
-				return width;
-			}
+            public DeskView getDeskViewByNumber(int number) {
+                for (DeskView deskView : deskViewsCopy) {
+                    if (deskView.getNumber() == number) {
+                        return deskView;
+                    }
+                }
+                throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
+            }
 
-			public int getHeight() {
-				return height;
-			}
+            /**
+             * @author Kinga
+             * Zwracanie robota o określonej nazwie
+             */
+            public RobotView getRobotViewByName(String name) {
+                for (RobotView robotView : robotViewsCopy) {
+                    if (robotView.getName().equals(name)) {
+                        return robotView;
+                    }
+                }
+                throw new EnvinronmentException("Nie odlaleziono robota o okreslonej nazwie: " + name);
+            }
 
-			public Collection<ElementView> getAllElementViews() {
-				Set<ElementView> set = new HashSet<ElementView>();
-				set.addAll(robotViewsCopy);
-				set.addAll(studentViewsCopy);
-				set.addAll(bookshelfViewsCopy);
-				set.addAll(deskViewsCopy);
-				set.addAll(robotAreaMarkerViewsCopy);
-				return set;
-			}
-		};
-	}
+            public int getWidth() {
+                return width;
+            }
 
-	/**
-	 * Metoda zwraca widok przeznaczny dla robota
-	 * @return
-	 */
-	public StudentEnvironmentView getStudentEnvironmentView() {
-		final Environment environment = this;
-		return new StudentEnvironmentView() {
+            public int getHeight() {
+                return height;
+            }
 
-			// zatrzaskiwanie
-			private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
-			private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
-			private final Collection<MarkerView> studentAreaMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_AREA);
-			private final Collection<MarkerView> studentEntryMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_ENTRY);
-			private final Collection<MarkerView> studentExitMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_EXIT);
+            public Collection<ElementView> getAllElementViews() {
+                Set<ElementView> set = new HashSet<ElementView>();
+                set.addAll(robotViewsCopy);
+                set.addAll(studentViewsCopy);
+                set.addAll(bookshelfViewsCopy);
+                set.addAll(deskViewsCopy);
+                set.addAll(robotAreaMarkerViewsCopy);
+                return set;
+            }
+        };
+    }
 
-			public Collection<DeskView> getDeskViews() {
-				return deskViewsCopy;
-			}
+    /**
+     * Metoda zwraca widok przeznaczny dla robota
+     * @return
+     */
+    public StudentEnvironmentView getStudentEnvironmentView() {
+        final Environment environment = this;
+        return new StudentEnvironmentView() {
 
-			public Collection<MarkerView> getStudentAreaMarkerViews() {
-				return studentAreaMarkerViewsCopy;
-			}
+            // zatrzaskiwanie
+            private final Collection<StudentView> studentViewsCopy = environment.getStudentViews();
+            private final Collection<DeskView> deskViewsCopy = environment.getDeskViews();
+            private final Collection<MarkerView> studentAreaMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_AREA);
+            private final Collection<MarkerView> studentEntryMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_ENTRY);
+            private final Collection<MarkerView> studentExitMarkerViewsCopy = environment.getMarkerViewsByType(ElementType.STUDENT_EXIT);
 
-			public Collection<StudentView> getStudentViews() {
-				return studentViewsCopy;
-			}
+            public Collection<DeskView> getDeskViews() {
+                return deskViewsCopy;
+            }
 
-			public Collection<MarkerView> getStudentEntryMarkerViews() {
-				return studentEntryMarkerViewsCopy;
-			}
+            public Collection<MarkerView> getStudentAreaMarkerViews() {
+                return studentAreaMarkerViewsCopy;
+            }
 
-			public Collection<MarkerView> getStudentExitMarkerViews() {
-				return studentExitMarkerViewsCopy;
-			}
+            public Collection<StudentView> getStudentViews() {
+                return studentViewsCopy;
+            }
 
-			public DeskView getDeskViewByNumber(int number) {
-				for (DeskView deskView : deskViewsCopy) {
-					if (deskView.getNumber() == number) {
-						return deskView;
-					}
-				}
-				throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
-			}
+            public Collection<MarkerView> getStudentEntryMarkerViews() {
+                return studentEntryMarkerViewsCopy;
+            }
 
-			public int getWidth() {
-				return width;
-			}
+            public Collection<MarkerView> getStudentExitMarkerViews() {
+                return studentExitMarkerViewsCopy;
+            }
 
-			public int getHeight() {
-				return height;
-			}
+            public DeskView getDeskViewByNumber(int number) {
+                for (DeskView deskView : deskViewsCopy) {
+                    if (deskView.getNumber() == number) {
+                        return deskView;
+                    }
+                }
+                throw new EnvinronmentException("Nie odlaleziono biurka o okreslonym numerze: " + number);
+            }
 
-			public Collection<ElementView> getAllElementViews() {
-				Set<ElementView> set = new HashSet<ElementView>();
-				set.addAll(studentViewsCopy);
-				set.addAll(deskViewsCopy);
-				set.addAll(studentAreaMarkerViewsCopy);
-				set.addAll(studentEntryMarkerViewsCopy);
-				set.addAll(studentExitMarkerViewsCopy);
-				return set;
-			}
-		};
-	}
+            public int getWidth() {
+                return width;
+            }
 
-	/**
-	 * Ustawia elementom srodowiska ktore tego potrzebuja obiekt logowania
-	 * @param collector
-	 */
-	public void setLoggingAgent(LoggingAgent collector) {
-		// ustawianie loggera polkom
-		for (Bookshelf bookshelf : bookshelfs) {
-			String id = "Bookshelf-" + bookshelf.getNumber();
-			bookshelf.setLogger(collector.createLoggingHandler(LoggerGroup.BOOKSHELF, id));
-		}
-		// ustawianie loggera biurkom
-		for (Desk desk : desks) {
-			String id = "Desk-" + desk.getNumber();
-			desk.setLogger(collector.createLoggingHandler(LoggerGroup.DESK, id));
-		}
-		// ustawianie loggera robotom
-		for (Robot robot : robots) {
-			String id = "Robot-" + robot.getName();
-			String algorithmId = "Algorithm-" + robot.getName();
-			robot.setLogger(collector.createLoggingHandler(LoggerGroup.ROBOT, id));
-			robot.setAlgorithmLogger(collector.createLoggingHandler(LoggerGroup.ALGORITHM, algorithmId));
-		}
-	}
+            public int getHeight() {
+                return height;
+            }
+
+            public Collection<ElementView> getAllElementViews() {
+                Set<ElementView> set = new HashSet<ElementView>();
+                set.addAll(studentViewsCopy);
+                set.addAll(deskViewsCopy);
+                set.addAll(studentAreaMarkerViewsCopy);
+                set.addAll(studentEntryMarkerViewsCopy);
+                set.addAll(studentExitMarkerViewsCopy);
+                return set;
+            }
+        };
+    }
+
+    /**
+     * Ustawia elementom srodowiska ktore tego potrzebuja obiekt logowania
+     * @param collector
+     */
+    public void setLoggingAgent(LoggingAgent collector) {
+        // ustawianie loggera polkom
+        for (Bookshelf bookshelf : bookshelfs) {
+            String id = "Bookshelf-" + bookshelf.getNumber();
+            bookshelf.setLogger(collector.createLoggingHandler(LoggerGroup.BOOKSHELF, id));
+        }
+        // ustawianie loggera biurkom
+        for (Desk desk : desks) {
+            String id = "Desk-" + desk.getNumber();
+            desk.setLogger(collector.createLoggingHandler(LoggerGroup.DESK, id));
+        }
+        // ustawianie loggera robotom
+        for (Robot robot : robots) {
+            String id = "Robot-" + robot.getName();
+            String algorithmId = "Algorithm-" + robot.getName();
+            robot.setLogger(collector.createLoggingHandler(LoggerGroup.ROBOT, id));
+            robot.setAlgorithmLogger(collector.createLoggingHandler(LoggerGroup.ALGORITHM, algorithmId));
+        }
+    }
 }

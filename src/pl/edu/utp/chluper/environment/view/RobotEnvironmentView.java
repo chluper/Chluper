@@ -35,6 +35,15 @@ public interface RobotEnvironmentView extends EnvironmentView {
 	 * @return
 	 */
 	public Collection<RobotView> getRobotViews();
+        
+        /**
+         * @author Kinga
+         * Metoda pobiera dane robota na podstawie nazwy
+         * @param name - nazwa robota
+         * @return 
+         */
+        
+        public RobotView getRobotViewByName(String name);
 
 	/**
 	 * Metoda wyluskuje polke na podstawie isbn ksiazki
