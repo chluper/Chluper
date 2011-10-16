@@ -7,6 +7,7 @@ package pl.edu.utp.chluper.algorithm.concret;
 import java.util.ArrayList;
 import pl.edu.utp.chluper.algorithm.Decision;
 import pl.edu.utp.chluper.algorithm.DecisionType;
+import pl.edu.utp.chluper.algorithm.concret.RobotStates.RobotState;
 import pl.edu.utp.chluper.algorithm.util.AbstractAlgorithm;
 import pl.edu.utp.chluper.environment.element.Book;
 import pl.edu.utp.chluper.environment.view.RobotEnvironmentView;
@@ -32,11 +33,11 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
             for (RobotTask task : robotTasks) {
                 switch (task.getRobotTaskToDo()) {
                     case DELIVER_TO_BOOKSHELF:
-                        switch (simpleCoordinatorBookSeparation.getRobotState(controlledRobot.getName())) {
+                        switch (simpleCoordinatorBookSeparation.getIncanceOfRobotStates().getRobotState(controlledRobot.getName())) {
                             case WAITING_FOR_TASK:
-                                simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
+                                simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
                             case READY_TO_DO_TASKS:
-                                simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.TAKE);
+                                simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.TAKE);
                             case TAKE:
                                 if (!controlledRobot.getCache().contains(task.getBookToReturn())) {
                                     logger.level2("Pobieram książkę" + task.getBookToReturn() + "z biurka: " + task.getDeskNumber());
@@ -44,9 +45,9 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
                                     return new Decision(DecisionType.TAKE_FROM_DESK, task.getDeskNumber(), task.getBookToReturn().getIsbn());
                                 } else {
                                     if (!isUnsupoortedTasks(robotTasks, supportedRobotTask)) {
-                                        simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.GO);
+                                        simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.GO);
                                     } else {
-                                        simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
+                                        simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
                                         continue;
                                     }
                                 }
@@ -64,16 +65,16 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
                                 }
                                 break;
                             default:
-                                logger.level3("Błąd! Nieznany stan robota! DELIVER TO BOOKSHELF " + simpleCoordinatorBookSeparation.getRobotState(controlledRobot.getName()));
+                                logger.level3("Błąd! Nieznany stan robota! DELIVER TO BOOKSHELF " + simpleCoordinatorBookSeparation.getIncanceOfRobotStates().getRobotState(controlledRobot.getName()));
                                 return new Decision(DecisionType.WAIT);
                         }
                         break;
                     case DELIVER_TO_DESK:
-                        switch (simpleCoordinatorBookSeparation.getRobotState(controlledRobot.getName())) {
+                        switch (simpleCoordinatorBookSeparation.getIncanceOfRobotStates().getRobotState(controlledRobot.getName())) {
                             case WAITING_FOR_TASK:
-                                simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
+                                simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
                             case READY_TO_DO_TASKS:
-                                simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.TAKE);
+                                simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.TAKE);
                             case TAKE:
                                 if (isInCache(task.getBookToLend(), controlledRobot) == false) {
                                     logger.level2("Pobieram książkę: " + task.getBookToLend() + " z pułki.");
@@ -81,9 +82,9 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
                                     return new Decision(DecisionType.TAKE_FROM_BOOKSHELF, task.getBookToLend());
                                 } else {
                                     if (!isUnsupoortedTasks(robotTasks, supportedRobotTask)) {
-                                        simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.GO);
+                                        simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.GO);
                                     } else {
-                                        simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
+                                        simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
                                         continue;
                                     }
                                 }
@@ -101,7 +102,7 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
                                 }
                                 break;
                             default:
-                                logger.level3("Błąd! Nieznany stan robota! DELIVER TO DESK " + simpleCoordinatorBookSeparation.getRobotState(controlledRobot.getName()));
+                                logger.level3("Błąd! Nieznany stan robota! DELIVER TO DESK " + simpleCoordinatorBookSeparation.getIncanceOfRobotStates().getRobotState(controlledRobot.getName()));
                                 return new Decision(DecisionType.WAIT);
                         }
                         break;
@@ -112,13 +113,13 @@ public class SimpleCoordintatedAlgorithBookSeparation extends AbstractAlgorithm 
             }
             if (controlledRobot.getCache().isEmpty()) {
                 logger.level2("Rozwiozłem wszystkie książki!");
-                simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
+                simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.READY_TO_DO_TASKS);
             }
             return new Decision(DecisionType.WAIT);
         } else {
             supportedRobotTask.clear();
             logger.level2("Oczekuję na zadania");
-            simpleCoordinatorBookSeparation.setRobotState(controlledRobot.getName(), RobotState.WAITING_FOR_TASK);
+            simpleCoordinatorBookSeparation.getIncanceOfRobotStates().setRobotState(controlledRobot.getName(), RobotState.WAITING_FOR_TASK);
             return new Decision(DecisionType.WAIT);
         }
     }

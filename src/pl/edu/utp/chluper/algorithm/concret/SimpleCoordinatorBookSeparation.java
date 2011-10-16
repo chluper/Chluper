@@ -5,8 +5,8 @@
 package pl.edu.utp.chluper.algorithm.concret;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
+import pl.edu.utp.chluper.algorithm.concret.RobotStates.RobotState;
 import pl.edu.utp.chluper.algorithm.util.AbstractCoordinator;
 import pl.edu.utp.chluper.environment.element.Book;
 import pl.edu.utp.chluper.environment.view.DeskView;
@@ -20,8 +20,9 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
 //
 
     private LinkedList<Integer> desks = new LinkedList<Integer>();  //biurka 
-    private HashMap<String, Enum> robotState = new HashMap<String, Enum>(); // stan Robota
     private ArrayList<RobotTask> robotTask = new ArrayList<RobotTask>();    // zadania Robota
+    private final RobotStates robotStates = new RobotStates();
+    
 
     public SimpleCoordinatorBookSeparation(RobotEnvironmentView environmentView) {
         //tworzenie listy biurek, które znajdują się w bibliotece
@@ -44,10 +45,10 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
 
         if (deskWithWishes != null) {
             //Jeśli jest jakiś robot, który się nudzi
-            if (robotState.containsValue(RobotState.WAITING_FOR_TASK)) {
-                for (String robotFree : robotState.keySet()) {
+            if (robotStates.getRobotState().containsValue(RobotState.WAITING_FOR_TASK)) {
+                for (String robotFree : robotStates.getRobotState().keySet()) {
                     //Jeśli to jest właśnie ten robot
-                    if (robotState.get(robotFree).equals(RobotState.WAITING_FOR_TASK)) {
+                    if (robotStates.getRobotState().get(robotFree).equals(RobotState.WAITING_FOR_TASK)) {
                         //Jeśli są książki do oddania       
                         if (!deskWithWishes.getBooksToReturn().isEmpty()) {
                             for (int i = 0; i < deskWithWishes.getBooksToReturn().size(); i++) {
@@ -124,31 +125,11 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
     public ArrayList<RobotTask> robotTask(String robotName) {
         ArrayList<RobotTask> robotTasks = new ArrayList<RobotTask>();
         for (RobotTask task : robotTask) {
-            if (task.getRobotName().equals(robotName)) {// && task.isIsInCache()==state) {
+            if (task.getRobotName().equals(robotName)) {
                 robotTasks.add(task);
             }
         }
         return robotTasks;
-    }
-
-    /**
-     * Ustawia aktualny stan robota
-     * @param robotName
-     * @param robotTask
-     * @return 
-     */
-    public HashMap<String, Enum> setRobotState(String robotName, RobotState robotTask) {
-        robotState.put(robotName, robotTask);
-        return robotState;
-    }
-
-    /**
-     * Pobiera aktualny stan robota
-     * @param robotName
-     * @return 
-     */
-    public RobotState getRobotState(String robotName) {
-        return (RobotState) robotState.get(robotName);
     }
 
     /**
@@ -159,5 +140,9 @@ public class SimpleCoordinatorBookSeparation extends AbstractCoordinator {
     public ArrayList<RobotTask> finishTask(RobotTask task) {
         robotTask.remove(task);
         return robotTask;
+    }
+    
+    public RobotStates getIncanceOfRobotStates(){
+        return robotStates;
     }
 }

@@ -41,7 +41,7 @@ public class Main {
 
 		// tworzenie srodowiska
         final EnvironmantCreator creator = new EnvironmantCreator();
-        final Environment environment = creator.createEnviroment(8, 5, 2, 3, 5);
+        final Environment environment = creator.createEnviroment(8, 5, 2, 5, 5);
 
 		// koordynator
 		//final Coordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
@@ -63,12 +63,12 @@ public class Main {
 //		environment.putRobot(robot);
                 
                 
-//                robot = new Robot("B", 1);
-//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordintatedAlgorithBookSeparation(coordinatorBookSeparation))));
-//		environment.putRobot(robot);
-//                robot = new Robot("C", 1);
-//		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordintatedAlgorithBookSeparation(coordinatorBookSeparation))));
-//		environment.putRobot(robot);
+                robot = new Robot("B", 1);
+		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordintatedAlgorithBookSeparation(coordinatorBookSeparation))));
+		environment.putRobot(robot);
+                robot = new Robot("C", 2);
+		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordintatedAlgorithBookSeparation(coordinatorBookSeparation))));
+		environment.putRobot(robot);
                 
                 
                 
@@ -125,7 +125,7 @@ public class Main {
 
 		// uruchamianie 
 		final Timer timer = new Timer();
-		timer.schedule(timerTask, 0, 10);
+		timer.schedule(timerTask, 0, 50);
 
     }
 
