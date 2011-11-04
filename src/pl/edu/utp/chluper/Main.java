@@ -39,7 +39,7 @@ public class Main {
 
 		// tworzenie srodowiska
         final EnvironmantCreator creator = new EnvironmantCreator();
-        final Environment environment = creator.createEnviroment(8, 5, 2, 3, 5);
+        final Environment environment = creator.createEnviroment(10, 5, 4, 2, 5);
 
 		// koordynator
 		final SimpleCoordinator coordinator = new SimpleCoordinator(environment.getRobotEnvironmentView());
@@ -53,13 +53,13 @@ public class Main {
 		environment.putRobot(robot);
 */
                 Robot robot;
-                robot = new Robot("A", 5);
+                robot = new Robot("A", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("B", 5);
+		robot = new Robot("B", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
-		robot = new Robot("C", 5);
+		robot = new Robot("C", 1);
 		robot.setAlgorithm(new RouteAlgorithm(new DeliverAlgorithm(new SimpleCoordinatedAlgorithm(coordinator))));
 		environment.putRobot(robot);
 //		robot = new Robot("D", 3);
@@ -75,19 +75,22 @@ public class Main {
 		// tworzenie scenariusza i symulacji
 		final Scenario scenario = new FixedRateScenario(5);
 		final Simulation simulation = new Simulation(environment, scenario, coordinator);
+                
+                //simulation.getStatistics();
 
 		// logger
 		final ConsoleLogger cl = new ConsoleLogger();
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1);
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.STUDENT);
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.STUDENT_ALGORITHM);
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.STUDENT_MANAGER);
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.EXECUTOR);
-//		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-A");
-		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-C");
-                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-D");
-                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-E");
-                                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-F");
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1);
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.STUDENT);
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.STUDENT_ALGORITHM);
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.STUDENT_MANAGER);
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.EXECUTOR);
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-A");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-B");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Algorithm-C");
+		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-A");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-B");
+                simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, "Robot-C");
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL2, LoggerGroup.COORDINATOR);
 		simulation.getLoggingAgent().addListener(cl, LoggingLevel.LEVEL1, LoggerGroup.DESK);
 
@@ -101,12 +104,13 @@ public class Main {
         frame.setVisible(true);
 
 	//        przeskok taktow
-//		for (int i = 0; i < 1700000; i++) {
-//			simulation.tick();
-//		}
+		for (int i = 0; i < 1700000; i++) {
+			simulation.tick();
+        ev.repaint();
+		}
 
 		// tworzenie zadania dla timera
-		final TimerTask timerTask = new TimerTask() {
+	/*	final TimerTask timerTask = new TimerTask() {
 
 			@Override
 			public void run() {
@@ -121,8 +125,8 @@ public class Main {
 
 		// uruchamianie 
 		final Timer timer = new Timer();
-		timer.schedule(timerTask, 0, 80);
+		timer.schedule(timerTask, 0, 100);
 
-    }
+   */ }
 
 }

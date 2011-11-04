@@ -66,9 +66,15 @@ public class Statistics {
 		return ((double) totalTimeSum ) / studentNumber;
 	}
 
+    public int getStudentNumber() {
+        return studentNumber;
+    }
+
+        
 	@Override
 	public String toString() {
-		return "[" + this.getClass().getSimpleName() + "|" + getAverageWaitingTime() + "|" + getAverageServeceTime() + "|" + getAverageTotalTime() + "]";
+		return "[" + this.getClass().getSimpleName() + "|"+ getStudentNumber() + "|" + getAverageWaitingTime() + "|" + getAverageServeceTime() + "|" + getAverageTotalTime() + "]";
+                
 	}
 
 
