@@ -7,6 +7,7 @@ package pl.edu.utp.chluper.algorithm.concret;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import pl.edu.utp.chluper.algorithm.concret.RobotStates.RobotState;
 import pl.edu.utp.chluper.algorithm.util.AbstractCoordinator;
 import pl.edu.utp.chluper.environment.view.DeskView;
 import pl.edu.utp.chluper.environment.view.RobotEnvironmentView;
@@ -14,16 +15,16 @@ import pl.edu.utp.chluper.environment.view.RobotView;
 
 /**
  *
- * @author damian & kinga
+ * @author kinga
  */
 public class SimpleCoordinator extends AbstractCoordinator {
 
     private LinkedList<Integer> desks = new LinkedList<Integer>();  //biurka
-    private ArrayList<RobotView> robots = new ArrayList<RobotView>();   //roboty
+    private final RobotStates robotStates = new RobotStates();
+    //private ArrayList<RobotView> robots = new ArrayList<RobotView>();   //roboty
     private HashMap<String, Integer> deskToDo = new HashMap<String, Integer>(); //biurka obslugiwane
 
     public SimpleCoordinator(RobotEnvironmentView environmentView) {
-        
         //tworzenie listy biurek, które znajdują się w bibliotece
         for (DeskView desk : environmentView.getDeskViews()) {
             desks.addFirst(desk.getNumber());
@@ -31,44 +32,30 @@ public class SimpleCoordinator extends AbstractCoordinator {
     }
 
     public void coordinate(RobotEnvironmentView environmentView) {
-        //Tworzenie listy robotów, które znajdują się w bibliotece
-        if (robots.isEmpty()) {
-            for (RobotView robot : environmentView.getRobotViews()) {
-                robots.add(robot);
-            }
-            logger.level2("Koordynator zczytał listę dostępnych robotów. Robotów czekających na zadanie: " + robots.size());
-        }
         //Wybieranie zajętego biurka, które powinno być obsługiwane
+
         DeskView deskWithWishes = null;
         for (int i = 0; i < desks.size(); i++) {
             int number = nextDeskNumber();
             if (!environmentView.getDeskViewByNumber(number).getBooksToReturn().isEmpty() || !environmentView.getDeskViewByNumber(number).getWishList().isEmpty()) {
-                if (!deskToDo.containsValue(number)) {
-                    deskWithWishes = environmentView.getDeskViewByNumber(number);
-                    logger.level2("Koordynator wybrał biurko, które będzie obsługiwane. Numer biurka: " + deskWithWishes.getNumber());
-                    break;
-                }
-
+                deskWithWishes = environmentView.getDeskViewByNumber(number);
+                logger.level1("Koordynator wybrał biurko, które będzie obsługiwane. Numer biurka: " + deskWithWishes.getNumber());
+                break;
             }
         }
-        
-        if (deskWithWishes != null) {
-            //Jeśli biurka są zajęte....
-            if (!deskWithWishes.getBooksToReturn().isEmpty() || !deskWithWishes.getWishList().isEmpty()) {
-                //Wybieranie wolnego robota, który może je obsłużyć.
-                //Przelatywanie listy robotów
-                for (RobotView waitingRobot : robots) {
-                    //Sprawdzanie czy robot nie jest już w deskToDo
-                    if (!deskToDo.containsKey(waitingRobot.getName())) {
-                        //Sprawdzanie czy biurko nie jest już w deskToDo
-                        if (!deskToDo.containsValue(deskWithWishes.getNumber())) {
-                            //Przypisywanie biurka do robota
-                            logger.level2("Biurkiem numer: " + deskWithWishes.getNumber() + " zajmie się robot: " + waitingRobot.getName());
-                            deskToDo.put(waitingRobot.getName(), deskWithWishes.getNumber());
-                            break;
 
+        if (deskWithWishes != null) {
+            if (robotStates.getRobotState().containsValue(RobotState.WAITING_FOR_TASK)) {
+                for (String robotFree : robotStates.getRobotState().keySet()) {
+                    //Jeśli to jest właśnie ten robot
+                    if (robotStates.getRobotState().get(robotFree).equals(RobotState.WAITING_FOR_TASK)) {
+                        //Jeśli biurko nie jest obsługiwane
+                        if (!deskToDo.containsValue(deskWithWishes.getNumber())) {
+                            logger.level1("Biurkiem numer: " + deskWithWishes.getNumber() + " zajmie się robot: " + robotFree);
+                            deskToDo.put(robotFree, deskWithWishes.getNumber());
+                            break;
                         } else {
-                            logger.level2("To biurko jest już obsługiwane!");
+                            logger.level1("To biurko jest już obsługiwane!");
                         }
                     }
                 }
@@ -98,5 +85,9 @@ public class SimpleCoordinator extends AbstractCoordinator {
         int number = desks.removeLast();
         desks.addFirst(number);
         return number;
+    }
+
+    public RobotStates getIncanceOfRobotStates() {
+        return robotStates;
     }
 }
